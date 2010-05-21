@@ -375,11 +375,8 @@ void OptionParser::error(const string& msg) const {
 ////////// class Values { //////////
 const string& Values::operator[] (const string& d) const {
   strMap::const_iterator it = _map.find(d);
-  static const string& _empty = "";
-  return (it != _map.end()) ? it->second : _empty;
-}
-bool Values::is_set(const string& d) const {
-  return _map.find(d) != _map.end();
+  static const string empty = "";
+  return (it != _map.end()) ? it->second : empty;
 }
 ////////// } class Values //////////
 

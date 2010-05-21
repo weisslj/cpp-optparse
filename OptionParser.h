@@ -30,6 +30,7 @@
  *
  * Future work:
  * - option groups
+ * - nargs > 1?
  * - callbacks?
  * - code simplification / cleanup
  * - comments?
@@ -71,20 +72,14 @@ namespace optparse {
 //! Class for automatic conversion from string -> anytype
 class Value {
   public:
-    Value(const std::string& v) : s(v) {}
+    Value() : s(), valid(false) {}
+    Value(const std::string& v) : s(v), valid(true) {}
     operator const char*() { return s.c_str(); }
-    operator bool() { bool t; std::istringstream(s) >> t; return t; }
-    operator short() { short t; std::istringstream(s) >> t; return t; }
-    operator unsigned short() { unsigned short t; std::istringstream(s) >> t; return t; }
-    operator int() { int t; std::istringstream(s) >> t; return t; }
-    operator unsigned int() { unsigned int t; std::istringstream(s) >> t; return t; }
-    operator long() { long t; std::istringstream(s) >> t; return t; }
-    operator unsigned long() { unsigned long t; std::istringstream(s) >> t; return t; }
-    operator float() { float t; std::istringstream(s) >> t; return t; }
-    operator double() { double t; std::istringstream(s) >> t; return t; }
-    operator long double() { long double t; std::istringstream(s) >> t; return t; }
+    template<typename NumType>
+    operator NumType() { NumType t; return (valid && (std::istringstream(s) >> t)) ? t : 0; }
  private:
     const std::string s;
+    bool valid;
 };
 
 typedef std::map<std::string,std::string> strMap;
@@ -94,8 +89,8 @@ class Values {
     Values() : _map() {}
     const std::string& operator[] (const std::string& d) const;
     std::string& operator[] (const std::string& d) { return _map[d]; }
-    bool is_set(const std::string& d) const;
-    Value get(const std::string& d) const { return Value((*this)[d]); }
+    bool is_set(const std::string& d) const { return _map.find(d) != _map.end(); }
+    Value get(const std::string& d) const { return (is_set(d)) ? Value((*this)[d]) : Value(); }
   private:
     strMap _map;
 };
