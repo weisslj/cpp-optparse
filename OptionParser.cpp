@@ -35,7 +35,7 @@ struct str_wrap {
   const string lwrap, rwrap;
 };
 template<typename InputIterator, typename UnaryOperator>
-string str_join_trans(const string& sep, InputIterator begin, InputIterator end, UnaryOperator op) {
+static string str_join_trans(const string& sep, InputIterator begin, InputIterator end, UnaryOperator op) {
   string buf;
   for (InputIterator it = begin; it != end; ++it) {
     if (it != begin)
@@ -45,10 +45,10 @@ string str_join_trans(const string& sep, InputIterator begin, InputIterator end,
   return buf;
 }
 template<class InputIterator>
-string str_join(const string& sep, InputIterator begin, InputIterator end) {
+static string str_join(const string& sep, InputIterator begin, InputIterator end) {
   return str_join_trans(sep, begin, end, str_wrap(""));
 }
-string& str_replace(string& s, const string& patt, const string& repl) {
+static string& str_replace(string& s, const string& patt, const string& repl) {
   size_t pos = 0, n = patt.length();
   while (true) {
     pos = s.find(patt, pos);
@@ -59,12 +59,12 @@ string& str_replace(string& s, const string& patt, const string& repl) {
   }
   return s;
 }
-string str_replace(const string& s, const string& patt, const string& repl) {
+static string str_replace(const string& s, const string& patt, const string& repl) {
   string tmp = s;
   str_replace(tmp, patt, repl);
   return tmp;
 }
-string str_format(const string& s, size_t pre, size_t len, bool indent_first) {
+static string str_format(const string& s, size_t pre, size_t len, bool indent_first) {
   stringstream ss;
   string p;
   if (indent_first)
@@ -92,6 +92,14 @@ string str_format(const string& s, size_t pre, size_t len, bool indent_first) {
     pos = new_pos + 1;
   }
   ss << p << s.substr(linestart) << endl;
+  return ss.str();
+}
+static string str_inc(const string& s) {
+  stringstream ss;
+  string v = (s != "") ? s : "0";
+  long i;
+  istringstream(v) >> i;
+  ss << i+1;
   return ss.str();
 }
 ////////// } auxiliary string functions //////////
@@ -272,15 +280,7 @@ void OptionParser::process_opt(const Option& o, const string& opt, const string&
     _values[o.dest()] = "0";
   } else
   if (o.action() == "count") {
-    string& v = _values[o.dest()];
-    if (v == "")
-      v = "0";
-    int i;
-    istringstream(v) >> i;
-    i++;
-    stringstream ss;
-    ss << i;
-    v = ss.str();
+    _values[o.dest()] = str_inc(_values[o.dest()]);
   } else
   if (o.action() == "help") {
     print_help();
