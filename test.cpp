@@ -19,6 +19,7 @@ struct Output {
       cout << delim;
     cout << s;
   }
+  ~Output() { cout << endl; }
   const string& delim;
   bool first;
 };
@@ -94,7 +95,7 @@ int main(int argc, char *argv[])
   parser.add_option("--more-milk") .action("append_const") .set_const("milk");
 
   MyCallback mc;
-  parser.add_option("-K", "--callback") .action("callback") .callback(mc);
+  parser.add_option("-K", "--callback") .action("callback") .callback(mc) .help("callback test");
 
   Values& options = parser.parse_args(argc, argv);
   vector<string> args = parser.args();
@@ -117,18 +118,12 @@ int main(int argc, char *argv[])
   cout << "choices: " << (const char*) options.get("choices") << endl;
   cout << "more: ";
   for_each(options.all("more").begin(), options.all("more").end(), Output(", "));
-  cout << endl;
-
   cout << "more_milk: ";
-  bool first = true;
-  for (Values::iterator it = options.all("more_milk").begin(); it != options.all("more_milk").end(); ++it) {
-    if (first)
-      first = false;
-    else
-      cout << ", ";
-    cout << *it;
+  {
+    Output out(", ");
+    for (Values::iterator it = options.all("more_milk").begin(); it != options.all("more_milk").end(); ++it)
+      out(*it);
   }
-  cout << endl;
 
   cout << endl << "leftover arguments: " << endl;
   for (vector<string>::const_iterator it = args.begin(); it != args.end(); ++it) {
