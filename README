@@ -29,7 +29,6 @@ Why not use tclap/Opag/Options/CmdLine/Anyoption/Argument_helper/...?
 
 Future work:
 - option groups
-- callbacks?
 - code simplification / cleanup
 - comments?
 

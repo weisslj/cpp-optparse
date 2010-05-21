@@ -272,26 +272,40 @@ void OptionParser::process_opt(const Option& o, const string& opt, const string&
     if (err != "")
       error(err);
     _values[o.dest()] = value;
-  } else
-  if (o.action() == "store_const") {
+  }
+  else if (o.action() == "store_const") {
     _values[o.dest()] = o.get_const();
-  } else
-  if (o.action() == "store_true") {
+  }
+  else if (o.action() == "store_true") {
     _values[o.dest()] = "1";
-  } else
-  if (o.action() == "store_false") {
+  }
+  else if (o.action() == "store_false") {
     _values[o.dest()] = "0";
-  } else
-  if (o.action() == "count") {
+  }
+  else if (o.action() == "append") {
+    string err = o.check_type(opt, value);
+    if (err != "")
+      error(err);
+    _values[o.dest()] = value;
+    _values.all(o.dest()).push_back(value);
+  }
+  else if (o.action() == "append_const") {
+    _values[o.dest()] = o.get_const();
+    _values.all(o.dest()).push_back(o.get_const());
+  }
+  else if (o.action() == "count") {
     _values[o.dest()] = str_inc(_values[o.dest()]);
-  } else
-  if (o.action() == "help") {
+  }
+  else if (o.action() == "help") {
     print_help();
     std::exit(0);
-  } else
-  if (o.action() == "version") {
+  }
+  else if (o.action() == "version") {
     print_version();
     std::exit(0);
+  }
+  else if (o.action() == "callback" && o.callback()) {
+    (*o.callback())(o, opt, value, *this);
   }
 }
 

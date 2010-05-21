@@ -4,10 +4,38 @@
 #include <sstream>
 #include <string>
 #include <complex>
+#include <algorithm>
 
 using namespace std;
 
-using optparse::OptionParser;
+using namespace optparse;
+
+struct Output {
+  Output(const string& d) : delim(d), first(true) {}
+  void operator() (const string& s) {
+    if (first)
+      first = false;
+    else
+      cout << delim;
+    cout << s;
+  }
+  const string& delim;
+  bool first;
+};
+
+struct MyCallback : public optparse::Callback {
+  MyCallback() : counter(0) {}
+  void operator() (const Option& option, const std::string& opt, const std::string& val, const OptionParser& parser) {
+    counter++;
+    cout << "--- MyCallback --- " << counter << ". time called" << endl;
+    cout << "--- MyCallback --- option.action(): " << option.action() << endl;
+    cout << "--- MyCallback --- opt: " << opt << endl;
+    cout << "--- MyCallback --- val: " << val << endl;
+    cout << "--- MyCallback --- parser.usage(): " << parser.usage() << endl;
+    cout << endl;
+  }
+  int counter;
+};
 
 int main(int argc, char *argv[])
 {
@@ -44,8 +72,8 @@ int main(int argc, char *argv[])
   parser.set_defaults("no_clear", "0");
 
   // test all actions
-  parser.add_option("--clear") .action("store_true") .dest("no_clear") .help("clear (default)");
-  parser.add_option("--no-clear") .action("store_false") .dest("clear") .help("not clear");
+  parser.add_option("--clear") .action("store_false") .dest("no_clear") .help("clear (default)");
+  parser.add_option("--no-clear") .action("store_true") .help("not clear");
   parser.add_option("--string")
     .help("This is a really long text... very long indeed! It must be wrapped on normal terminals.");
   parser.add_option("-x", "--clause", "--sentence") .metavar("SENTENCE") .set_default("I'm a sentence")
@@ -62,12 +90,16 @@ int main(int argc, char *argv[])
   parser.add_option("-c", "--complex") .action("store") .type("complex");
   char const* const choices[] = { "foo", "bar", "baz" };
   parser.add_option("-C", "--choices") .choices(&choices[0], &choices[3]);
+  parser.add_option("-m", "--more") .action("append");
+  parser.add_option("--more-milk") .action("append_const") .set_const("milk");
 
-  optparse::Values& options = parser.parse_args(argc, argv);
+  MyCallback mc;
+  parser.add_option("-K", "--callback") .action("callback") .callback(mc);
+
+  Values& options = parser.parse_args(argc, argv);
   vector<string> args = parser.args();
 
-  bool no_clear = options.get("no_clear");
-  cout << "clear: " << (no_clear ? "true" : "false") << endl;
+  cout << "clear: " << (options.get("no_clear") ? "false" : "true") << endl;
   cout << "string: " << options["string"] << endl;
   cout << "clause: " << options["clause"] << endl;
   cout << "k: " << options["k"] << endl;
@@ -83,6 +115,20 @@ int main(int argc, char *argv[])
   }
   cout << "complex: " << c << endl;
   cout << "choices: " << (const char*) options.get("choices") << endl;
+  cout << "more: ";
+  for_each(options.all("more").begin(), options.all("more").end(), Output(", "));
+  cout << endl;
+
+  cout << "more_milk: ";
+  bool first = true;
+  for (Values::iterator it = options.all("more_milk").begin(); it != options.all("more_milk").end(); ++it) {
+    if (first)
+      first = false;
+    else
+      cout << ", ";
+    cout << *it;
+  }
+  cout << endl;
 
   cout << endl << "leftover arguments: " << endl;
   for (vector<string>::const_iterator it = args.begin(); it != args.end(); ++it) {

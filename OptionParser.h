@@ -31,7 +31,6 @@
  * Future work:
  * - option groups
  * - nargs > 1?
- * - callbacks?
  * - code simplification / cleanup
  * - comments?
  *
@@ -69,21 +68,30 @@
 
 namespace optparse {
 
+class OptionParser;
+class Option;
+class Values;
+class Value;
+class Callback;
+
+typedef std::map<std::string,std::string> strMap;
+typedef std::map<std::string,std::list<std::string> > lstMap;
+typedef std::map<std::string,Option*> optMap;
+
 //! Class for automatic conversion from string -> anytype
 class Value {
   public:
-    Value() : s(), valid(false) {}
-    Value(const std::string& v) : s(v), valid(true) {}
-    operator const char*() { return s.c_str(); }
-    operator bool() { bool t; return (valid && (std::istringstream(s) >> t)) ? t : false; }
+    Value() : str(), valid(false) {}
+    Value(const std::string& v) : str(v), valid(true) {}
+    operator const char*() { return str.c_str(); }
+    operator bool() { bool t; return (valid && (std::istringstream(str) >> t)) ? t : false; }
     template<typename NumType>
-    operator NumType() { NumType t; return (valid && (std::istringstream(s) >> t)) ? t : 0; }
+    operator NumType() { NumType t; return (valid && (std::istringstream(str) >> t)) ? t : 0; }
  private:
-    const std::string s;
+    const std::string str;
     bool valid;
 };
 
-typedef std::map<std::string,std::string> strMap;
 
 class Values {
   public:
@@ -92,13 +100,25 @@ class Values {
     std::string& operator[] (const std::string& d) { return _map[d]; }
     bool is_set(const std::string& d) const { return _map.find(d) != _map.end(); }
     Value get(const std::string& d) const { return (is_set(d)) ? Value((*this)[d]) : Value(); }
+
+    typedef std::list<std::string>::iterator iterator;
+    typedef std::list<std::string>::const_iterator const_iterator;
+    std::list<std::string>& all(const std::string& d) { return _appendMap[d]; }
+    const std::list<std::string>& all(const std::string& d) const { return _appendMap.find(d)->second; }
+
   private:
     strMap _map;
+    lstMap _appendMap;
+};
+
+struct Callback {
+  virtual void operator() (const Option& option, const std::string& opt, const std::string& val, const OptionParser& parser) = 0;
+  virtual ~Callback() {}
 };
 
 class Option {
   public:
-    Option() : _action("store"), _type("string"), _nargs(1) {}
+    Option() : _action("store"), _type("string"), _nargs(1), _callback(0) {}
 
     Option& action(const std::string& a);
     Option& type(const std::string& t) { _type = t; return *this; }
@@ -112,6 +132,7 @@ class Option {
     }
     Option& help(const std::string& h) { _help = h; return *this; }
     Option& metavar(const std::string& m) { _metavar = m; return *this; }
+    Option& callback(Callback& c) { _callback = &c; return *this; }
 
     const std::string& action() const { return _action; }
     const std::string& type() const { return _type; }
@@ -122,6 +143,7 @@ class Option {
     const std::list<std::string>& choices() const { return _choices; }
     const std::string& help() const { return _help; }
     const std::string& metavar() const { return _metavar; }
+    Callback* callback() const { return _callback; }
 
   private:
     std::string check_type(const std::string& opt, const std::string& val) const;
@@ -140,11 +162,10 @@ class Option {
     std::list<std::string> _choices;
     std::string _help;
     std::string _metavar;
+    Callback* _callback;
 
     friend class OptionParser;
 };
-
-typedef std::map<std::string,Option*> optMap;
 
 class OptionParser {
   public:
