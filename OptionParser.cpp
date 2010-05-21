@@ -221,9 +221,9 @@ Values& OptionParser::parse_args(const int argc, char const* const* const argv) 
     _prog = argv[0];
   return parse_args(&argv[1], &argv[argc]);
 }
-Values& OptionParser::parse_args(const vector<string>& args) {
+Values& OptionParser::parse_args(const vector<string>& v) {
 
-  _remaining.assign(args.begin(), args.end());
+  _remaining.assign(v.begin(), v.end());
 
   if (add_help_option())
     add_option("-h", "--help") .action("help") .help(_("show this help message and exit"));

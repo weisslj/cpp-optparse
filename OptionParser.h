@@ -91,6 +91,7 @@ typedef std::map<std::string,std::string> strMap;
 
 class Values {
   public:
+    Values() : _map() {}
     const std::string& operator[] (const std::string& d) const;
     std::string& operator[] (const std::string& d) { return _map[d]; }
     bool is_set(const std::string& d) const;
