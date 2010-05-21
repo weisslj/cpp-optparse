@@ -92,9 +92,9 @@ typedef std::map<std::string,std::string> strMap;
 class Values {
   public:
     const std::string& operator[] (const std::string& d) const;
-    std::string& operator[] (const std::string& d);
+    std::string& operator[] (const std::string& d) { return _map[d]; }
     bool is_set(const std::string& d) const;
-    Value get(const std::string& d) const;
+    Value get(const std::string& d) const { return Value((*this)[d]); }
   private:
     strMap _map;
 };

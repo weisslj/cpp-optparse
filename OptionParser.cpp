@@ -375,16 +375,8 @@ const string& Values::operator[] (const string& d) const {
   static const string& _empty = "";
   return (it != _map.end()) ? it->second : _empty;
 }
-string& Values::operator[] (const string& d) {
-  return _map[d];
-}
 bool Values::is_set(const string& d) const {
   return _map.find(d) != _map.end();
-}
-Value Values::get(const string& d) const {
-  strMap::const_iterator it = _map.find(d);
-  static const string& _empty = "";
-  return Value((it != _map.end()) ? it->second : _empty);
 }
 ////////// } class Values //////////
 
