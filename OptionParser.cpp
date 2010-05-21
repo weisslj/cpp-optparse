@@ -7,7 +7,6 @@
 
 #include "OptionParser.h"
 
-#include <sstream>
 #include <cstdlib>
 #include <algorithm>
 #include <complex>
@@ -80,7 +79,7 @@ static string str_format(const string& s, size_t pre, size_t len, bool indent_fi
     }
     if (line == 1)
       p = string(pre, ' ');
-    if (wrap || new_pos + p.length() > linestart + len) {
+    if (wrap || new_pos + pre > linestart + len) {
       ss << p << s.substr(linestart, pos - linestart - 1) << endl;
       linestart = pos;
       line++;
@@ -458,6 +457,7 @@ string Option::format_help() const {
   string h = format_option_help();
   bool indent_first;
   ss << h;
+  // if the option list is too long, start a new paragraph
   if (h.length() > 22) {
     ss << endl;
     indent_first = true;
