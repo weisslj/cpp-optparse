@@ -22,7 +22,7 @@ using namespace std;
 
 namespace optparse {
 
-////////// auxiliary string functions { //////////
+////////// auxiliary (string) functions { //////////
 struct str_wrap {
   str_wrap(const string& l, const string& r) : lwrap(l), rwrap(r) {}
   str_wrap(const string& w) : lwrap(w), rwrap(w) {}
@@ -97,7 +97,15 @@ static string str_inc(const string& s) {
   ss << i+1;
   return ss.str();
 }
-////////// } auxiliary string functions //////////
+static int cols() {
+  int n = 80;
+  const char *s = getenv("COLUMNS");
+  if (s)
+    istringstream(s) >> n;
+  return n;
+}
+  
+////////// } auxiliary (string) functions //////////
 
 
 ////////// class OptionParser { //////////
@@ -329,12 +337,12 @@ string OptionParser::format_help() const {
     ss << get_usage() << endl;
 
   if (description() != "")
-    ss << str_format(description(), 0, 80, true) << endl;
+    ss << str_format(description(), 0, cols(), true) << endl;
 
   ss << format_option_help();
 
   if (epilog() != "")
-    ss << endl << str_format(epilog(), 0, 80, true);
+    ss << endl << str_format(epilog(), 0, cols(), true);
 
   return ss.str();
 }
@@ -455,20 +463,21 @@ string Option::format_option_help() const {
 string Option::format_help() const {
   stringstream ss;
   string h = format_option_help();
-  bool indent_first;
+  size_t width = cols();
+  size_t opt_width = min(width*3/10, 36u);
+  bool indent_first = false;
   ss << h;
   // if the option list is too long, start a new paragraph
-  if (h.length() > 22) {
+  if (h.length() >= (opt_width-1)) {
     ss << endl;
     indent_first = true;
   } else {
-    ss << string(24 - h.length(), ' ');
-    indent_first = false;
+    ss << string(opt_width - h.length(), ' ');
     if (help() == "")
       ss << endl;
   }
   if (help() != "")
-    ss << str_format(help(), 24, 80, indent_first);
+    ss << str_format(help(), opt_width, width, indent_first);
   return ss.str();
 }
 
