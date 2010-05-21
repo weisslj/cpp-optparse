@@ -97,14 +97,13 @@ static string str_inc(const string& s) {
   ss << i+1;
   return ss.str();
 }
-static int cols() {
-  int n = 80;
+static size_t cols() {
+  size_t n = 80;
   const char *s = getenv("COLUMNS");
   if (s)
     istringstream(s) >> n;
   return n;
 }
-  
 ////////// } auxiliary (string) functions //////////
 
 
@@ -232,10 +231,14 @@ Values& OptionParser::parse_args(const vector<string>& v) {
 
   _remaining.assign(v.begin(), v.end());
 
-  if (add_help_option())
-    add_option("-h", "--help") .action("help") .help(_("show this help message and exit"));
-  if (add_version_option() and version() != "")
+  if (add_version_option() and version() != "") {
     add_option("--version") .action("version") .help(_("show program's version number and exit"));
+    _opts.splice(_opts.begin(), _opts, --(_opts.end()));
+  }
+  if (add_help_option()) {
+    add_option("-h", "--help") .action("help") .help(_("show this help message and exit"));
+    _opts.splice(_opts.begin(), _opts, --(_opts.end()));
+  }
 
   while (not _remaining.empty()) {
     const string arg = _remaining.front();

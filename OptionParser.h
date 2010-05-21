@@ -34,6 +34,10 @@
  * - code simplification / cleanup
  * - comments?
  *
+ * Python only features:
+ * - conflict handlers
+ * - adding new actions
+ *
  *
  * Example:
  *
