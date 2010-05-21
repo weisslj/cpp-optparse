@@ -12,15 +12,11 @@
 #include <algorithm>
 #include <complex>
 
-#if ENABLE_NLS
+#if defined(ENABLE_NLS) && ENABLE_NLS
 # include <libintl.h>
-# ifndef _
-#  define _(s) gettext(s)
-# endif
+# define _(s) gettext(s)
 #else
-# ifndef _
-#  define _(s) s
-# endif
+# define _(s) ((const char *) (s))
 #endif
 
 using namespace std;
