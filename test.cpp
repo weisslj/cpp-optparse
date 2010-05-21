@@ -72,14 +72,7 @@ int main(int argc, char *argv[])
   cout << "k: " << options["k"] << endl;
   cout << "verbosity: " << options["verbosity"] << endl;
   cout << "number: " << (int) options.get("number") << endl;
-
-  cout << "-------" << endl;
-  const char *x = options.get("int");
-  int i = options.get("int");
-  cout << "-------" << endl;
   cout << "int: " << (int) options.get("int") << endl;
-  cout << "int: " << x << endl;
-  cout << "int: " << i << endl;
   cout << "float: " << (float) options.get("float") << endl;
   complex<double> c = 0;
   if (options.is_set("complex")) {
