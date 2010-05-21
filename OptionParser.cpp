@@ -237,8 +237,10 @@ Values& OptionParser::parse_args(const vector<string>& args) {
   while (not _remaining.empty()) {
     const string arg = _remaining.front();
 
-    if (arg == "--")
+    if (arg == "--") {
+      _remaining.pop_front();
       break;
+    }
 
     if (arg.substr(0,2) == "--") {
       handle_long_opt(arg.substr(2));
@@ -248,6 +250,11 @@ Values& OptionParser::parse_args(const vector<string>& args) {
       _remaining.pop_front();
       _leftover.push_back(arg);
     }
+  }
+  while (not _remaining.empty()) {
+    const string arg = _remaining.front();
+    _remaining.pop_front();
+    _leftover.push_back(arg);
   }
 
   for (strMap::const_iterator it = _defaults.begin(); it != _defaults.end(); ++it) {
