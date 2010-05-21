@@ -66,7 +66,8 @@ int main(int argc, char *argv[])
   optparse::Values& options = parser.parse_args(argc, argv);
   vector<string> args = parser.args();
 
-  cout << "clear: " << (options.get("no_clear") ? "true" : "false") << endl;
+  bool no_clear = options.get("no_clear");
+  cout << "clear: " << (no_clear ? "true" : "false") << endl;
   cout << "string: " << options["string"] << endl;
   cout << "clause: " << options["clause"] << endl;
   cout << "k: " << options["k"] << endl;

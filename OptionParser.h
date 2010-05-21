@@ -75,6 +75,7 @@ class Value {
     Value() : s(), valid(false) {}
     Value(const std::string& v) : s(v), valid(true) {}
     operator const char*() { return s.c_str(); }
+    operator bool() { bool t; return (valid && (std::istringstream(s) >> t)) ? t : false; }
     template<typename NumType>
     operator NumType() { NumType t; return (valid && (std::istringstream(s) >> t)) ? t : 0; }
  private:
