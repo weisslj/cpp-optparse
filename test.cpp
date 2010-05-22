@@ -68,6 +68,9 @@ int main(int argc, char *argv[])
     .version(version)
     .description(desc)
     .epilog(epilog)
+#ifdef DISABLE_INTERSPERSED_ARGS
+    .disable_interspersed_args()
+#endif
   ;
 
   parser.set_defaults("verbosity", "50");
@@ -84,7 +87,7 @@ int main(int argc, char *argv[])
   parser.add_option("-k") .action("count") .help("how many times?");
   parser.add_option("-v", "--verbose") .action("store_const") .set_const("100") .dest("verbosity") .help("be verbose!");
   parser.add_option("-s", "--silent") .action("store_const") .set_const("0") .dest("verbosity") .help("be silent!");
-  parser.add_option("-n", "--number") .type("int") .set_default("1") .metavar("NUM") .help("number of files");
+  parser.add_option("-n", "--number") .type("int") .set_default("1") .metavar("NUM") .help("number of files (default: %default)");
   parser.add_option("-H") .action("help") .help("alternative help");
   parser.add_option("-V") .action("version") .help("alternative version");
   parser.add_option("-i", "--int") .action("store") .type("int");

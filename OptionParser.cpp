@@ -111,8 +111,8 @@ static size_t cols() {
 OptionParser::OptionParser() :
   _usage(_("%prog [options]")),
   _add_help_option(true),
-  _add_version_option(true) {
-}
+  _add_version_option(true),
+  _interspersed_args(true) {}
 
 Option& OptionParser::add_option(const string& opt) {
   const string tmp[1] = { opt };
@@ -255,6 +255,8 @@ Values& OptionParser::parse_args(const vector<string>& v) {
     } else {
       _remaining.pop_front();
       _leftover.push_back(arg);
+      if (not interspersed_args())
+        break;
     }
   }
   while (not _remaining.empty()) {
@@ -479,8 +481,10 @@ string Option::format_help() const {
     if (help() == "")
       ss << endl;
   }
-  if (help() != "")
-    ss << str_format(help(), opt_width, width, indent_first);
+  if (help() != "") {
+    string help_str = (get_default() != "") ? str_replace(help(), "%default", get_default()) : help();
+    ss << str_format(help_str, opt_width, width, indent_first);
+  }
   return ss.str();
 }
 

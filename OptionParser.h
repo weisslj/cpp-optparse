@@ -128,6 +128,8 @@ class OptionParser {
     OptionParser& set_defaults(const std::string& dest, const std::string& val) {
       _defaults[dest] = val; return *this;
     }
+    OptionParser& enable_interspersed_args() { _interspersed_args = true; return *this; }
+    OptionParser& disable_interspersed_args() { _interspersed_args = false; return *this; }
 
     const std::string& usage() const { return _usage; }
     const std::string& version() const { return _version; }
@@ -136,6 +138,7 @@ class OptionParser {
     bool add_version_option() const { return _add_version_option; }
     const std::string& prog() const { return _prog; }
     const std::string& epilog() const { return _epilog; }
+    bool interspersed_args() const { return _interspersed_args; }
 
     Option& add_option(const std::string& opt);
     Option& add_option(const std::string& opt1, const std::string& opt2);
@@ -188,6 +191,7 @@ class OptionParser {
     bool _add_version_option;
     std::string _prog;
     std::string _epilog;
+    bool _interspersed_args;
 
     Values _values;
 
