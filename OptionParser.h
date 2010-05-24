@@ -88,8 +88,15 @@ class Value {
     Value(const std::string& v) : str(v), valid(true) {}
     operator const char*() { return str.c_str(); }
     operator bool() { bool t; return (valid && (std::istringstream(str) >> t)) ? t : false; }
-    template<typename NumType>
-    operator NumType() { NumType t; return (valid && (std::istringstream(str) >> t)) ? t : 0; }
+    operator short() { short t; return (valid && (std::istringstream(str) >> t)) ? t : 0; }
+    operator unsigned short() { unsigned short t; return (valid && (std::istringstream(str) >> t)) ? t : 0; }
+    operator int() { int t; return (valid && (std::istringstream(str) >> t)) ? t : 0; }
+    operator unsigned int() { unsigned int t; return (valid && (std::istringstream(str) >> t)) ? t : 0; }
+    operator long() { long t; return (valid && (std::istringstream(str) >> t)) ? t : 0; }
+    operator unsigned long() { unsigned long t; return (valid && (std::istringstream(str) >> t)) ? t : 0; }
+    operator float() { float t; return (valid && (std::istringstream(str) >> t)) ? t : 0; }
+    operator double() { double t; return (valid && (std::istringstream(str) >> t)) ? t : 0; }
+    operator long double() { long double t; return (valid && (std::istringstream(str) >> t)) ? t : 0; }
  private:
     const std::string str;
     bool valid;
@@ -232,6 +239,8 @@ class Option {
     Option& type(const std::string& t) { _type = t; return *this; }
     Option& dest(const std::string& d) { _dest = d; return *this; }
     Option& set_default(const std::string& d) { _default = d; return *this; }
+    template<typename T>
+    Option& set_default(T t) { std::ostringstream ss; ss << t; _default = ss.str(); return *this; }
     Option& nargs(size_t n) { _nargs = n; return *this; }
     Option& set_const(const std::string& c) { _const = c; return *this; }
     template<typename InputIterator>

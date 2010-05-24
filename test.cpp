@@ -90,8 +90,8 @@ int main(int argc, char *argv[])
   parser.add_option("-n", "--number") .type("int") .set_default("1") .metavar("NUM") .help("number of files (default: %default)");
   parser.add_option("-H") .action("help") .help("alternative help");
   parser.add_option("-V") .action("version") .help("alternative version");
-  parser.add_option("-i", "--int") .action("store") .type("int");
-  parser.add_option("-f", "--float") .action("store") .type("float");
+  parser.add_option("-i", "--int") .action("store") .type("int") .set_default(3) .help("default: %default");
+  parser.add_option("-f", "--float") .action("store") .type("float") .set_default(5.3) .help("default: %default");
   parser.add_option("-c", "--complex") .action("store") .type("complex");
   char const* const choices[] = { "foo", "bar", "baz" };
   parser.add_option("-C", "--choices") .choices(&choices[0], &choices[3]);
