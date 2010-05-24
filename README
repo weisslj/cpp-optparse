@@ -28,8 +28,7 @@ Why not use tclap/Opag/Options/CmdLine/Anyoption/Argument_helper/...?
 - similarity to Python desired for faster learning curve
 
 Future work:
-- option groups
-- code simplification / cleanup
+- nargs > 1?
 - comments?
 
 

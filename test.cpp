@@ -101,6 +101,12 @@ int main(int argc, char *argv[])
   MyCallback mc;
   parser.add_option("-K", "--callback") .action("callback") .callback(mc) .help("callback test");
 
+  OptionGroup group = OptionGroup(parser, "Dangerous Options",
+      "Caution: use these options at your own risk. "
+      "It is believed that some of them bite.");
+  group.add_option("-g") .action("store_true") .help("Group option.") .set_default("0");
+  parser.add_option_group(group);
+
   Values& options = parser.parse_args(argc, argv);
   vector<string> args = parser.args();
 
@@ -128,6 +134,7 @@ int main(int argc, char *argv[])
     for (Values::iterator it = options.all("more_milk").begin(); it != options.all("more_milk").end(); ++it)
       out(*it);
   }
+  cout << "group: " << (options.get("g") ? "true" : "false") << endl;
 
   cout << endl << "leftover arguments: " << endl;
   for (vector<string>::const_iterator it = args.begin(); it != args.end(); ++it) {

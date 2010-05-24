@@ -29,9 +29,7 @@
  * - similarity to Python desired for faster learning curve
  *
  * Future work:
- * - option groups
  * - nargs > 1?
- * - code simplification / cleanup
  * - comments?
  *
  * Python only features:
@@ -73,6 +71,7 @@
 namespace optparse {
 
 class OptionParser;
+class OptionGroup;
 class Option;
 class Values;
 class Value;
@@ -80,7 +79,7 @@ class Callback;
 
 typedef std::map<std::string,std::string> strMap;
 typedef std::map<std::string,std::list<std::string> > lstMap;
-typedef std::map<std::string,Option*> optMap;
+typedef std::map<std::string,Option const*> optMap;
 
 //! Class for automatic conversion from string -> anytype
 class Value {
@@ -117,6 +116,7 @@ class Values {
 class OptionParser {
   public:
     OptionParser();
+    virtual ~OptionParser() {}
 
     OptionParser& usage(const std::string& u) { set_usage(u); return *this; }
     OptionParser& version(const std::string& v) { _version = v; return *this; }
@@ -130,6 +130,7 @@ class OptionParser {
     }
     OptionParser& enable_interspersed_args() { _interspersed_args = true; return *this; }
     OptionParser& disable_interspersed_args() { _interspersed_args = false; return *this; }
+    OptionParser& add_option_group(const OptionGroup& group);
 
     const std::string& usage() const { return _usage; }
     const std::string& version() const { return _version; }
@@ -158,7 +159,7 @@ class OptionParser {
     }
 
     std::string format_help() const;
-    std::string format_option_help() const;
+    std::string format_option_help(unsigned int indent = 2) const;
     void print_help() const;
 
     void set_usage(const std::string& u);
@@ -199,14 +200,33 @@ class OptionParser {
     optMap _optmap_s;
     optMap _optmap_l;
     strMap _defaults;
+    std::list<OptionGroup const*> _groups;
 
     std::list<std::string> _remaining;
     std::list<std::string> _leftover;
 };
 
+class OptionGroup : public OptionParser {
+  public:
+    OptionGroup(const OptionParser& p, const std::string& t, const std::string& d = "") :
+      _parser(p), _title(t), _group_description(d) {}
+    virtual ~OptionGroup() {}
+
+    OptionGroup& title(const std::string& t) { _title = t; return *this; }
+    OptionGroup& group_description(const std::string& d) { _group_description = d; return *this; }
+    const std::string& title() const { return _title; }
+    const std::string& group_description() const { return _group_description; }
+
+  private:
+    const OptionParser& _parser;
+    std::string _title;
+    std::string _group_description;
+};
+
 class Option {
   public:
     Option() : _action("store"), _type("string"), _nargs(1), _callback(0) {}
+    virtual ~Option() {}
 
     Option& action(const std::string& a);
     Option& type(const std::string& t) { _type = t; return *this; }
@@ -235,8 +255,8 @@ class Option {
 
   private:
     std::string check_type(const std::string& opt, const std::string& val) const;
-    std::string format_option_help() const;
-    std::string format_help() const;
+    std::string format_option_help(unsigned int indent = 2) const;
+    std::string format_help(unsigned int indent = 2) const;
 
     std::set<std::string> _short_opts;
     std::set<std::string> _long_opts;

@@ -59,7 +59,7 @@ static string str_replace(const string& s, const string& patt, const string& rep
   str_replace(tmp, patt, repl);
   return tmp;
 }
-static string str_format(const string& s, size_t pre, size_t len, bool indent_first) {
+static string str_format(const string& s, size_t pre, size_t len, bool indent_first = true) {
   stringstream ss;
   string p;
   if (indent_first)
@@ -148,6 +148,18 @@ Option& OptionParser::add_option(const vector<string>& v) {
   if (option.dest() == "")
     option.dest(dest_fallback);
   return option;
+}
+
+OptionParser& OptionParser::add_option_group(const OptionGroup& group) {
+  for (list<Option>::const_iterator oit = group._opts.begin(); oit != group._opts.end(); ++oit) {
+    const Option& option = *oit;
+    for (set<string>::const_iterator it = option._short_opts.begin(); it != option._short_opts.end(); ++it)
+      _optmap_s[*it] = &option;
+    for (set<string>::const_iterator it = option._long_opts.begin(); it != option._long_opts.end(); ++it)
+      _optmap_l[*it] = &option;
+  }
+  _groups.push_back(&group);
+  return *this;
 }
 
 const Option& OptionParser::lookup_short_opt(const string& opt) const {
@@ -321,15 +333,14 @@ void OptionParser::process_opt(const Option& o, const string& opt, const string&
   }
 }
 
-string OptionParser::format_option_help() const {
+string OptionParser::format_option_help(unsigned int indent /* = 2 */) const {
   stringstream ss;
 
   if (_opts.empty())
     return ss.str();
 
-  ss << _("Options") << ":" << endl;
   for (list<Option>::const_iterator it = _opts.begin(); it != _opts.end(); ++it) {
-    ss << it->format_help();
+    ss << it->format_help(indent);
   }
 
   return ss.str();
@@ -342,12 +353,21 @@ string OptionParser::format_help() const {
     ss << get_usage() << endl;
 
   if (description() != "")
-    ss << str_format(description(), 0, cols(), true) << endl;
+    ss << str_format(description(), 0, cols()) << endl;
 
+  ss << _("Options") << ":" << endl;
   ss << format_option_help();
 
+  for (list<OptionGroup const*>::const_iterator it = _groups.begin(); it != _groups.end(); ++it) {
+    const OptionGroup& group = **it;
+    ss << endl << "  " << group.title() << ":" << endl;
+    if (group.group_description() != "")
+      ss << str_format(group.group_description(), 4, cols()) << endl;
+    ss << group.format_option_help(4);
+  }
+
   if (epilog() != "")
-    ss << endl << str_format(epilog(), 0, cols(), true);
+    ss << endl << str_format(epilog(), 0, cols());
 
   return ss.str();
 }
@@ -438,7 +458,7 @@ string Option::check_type(const string& opt, const string& val) const {
   return err.str();
 }
 
-string Option::format_option_help() const {
+string Option::format_option_help(unsigned int indent /* = 2 */) const {
 
   string mvar_short, mvar_long;
   if (nargs() == 1) {
@@ -446,13 +466,13 @@ string Option::format_option_help() const {
     if (mvar == "") {
       mvar = type();
       transform(mvar.begin(), mvar.end(), mvar.begin(), ::toupper);
-    }
+     }
     mvar_short = " " + mvar;
     mvar_long = "=" + mvar;
   }
 
   stringstream ss;
-  ss << "  ";
+  ss << string(indent, ' ');
 
   if (not _short_opts.empty()) {
     ss << str_join_trans(", ", _short_opts.begin(), _short_opts.end(), str_wrap("-", mvar_short));
@@ -465,9 +485,9 @@ string Option::format_option_help() const {
   return ss.str();
 }
 
-string Option::format_help() const {
+string Option::format_help(unsigned int indent /* = 2 */) const {
   stringstream ss;
-  string h = format_option_help();
+  string h = format_option_help(indent);
   size_t width = cols();
   size_t opt_width = min(width*3/10, 36u);
   bool indent_first = false;
