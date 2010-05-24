@@ -104,6 +104,20 @@ static size_t cols() {
     istringstream(s) >> n;
   return n;
 }
+static string basename(const string& s) {
+  string b = s;
+  size_t i = b.find_last_not_of('/');
+  if (i == string::npos) {
+    if (b[0] == '/')
+      b.erase(1);
+    return b;
+  }
+  b.erase(i+1, b.length()-i-1);
+  i = b.find_last_of("/");
+  if (i != string::npos)
+    b.erase(0, i+1);
+  return b;
+}
 ////////// } auxiliary (string) functions //////////
 
 
@@ -235,8 +249,8 @@ void OptionParser::handle_long_opt(const string& optstr) {
 }
 
 Values& OptionParser::parse_args(const int argc, char const* const* const argv) {
-  if (_prog == "")
-    _prog = argv[0];
+  if (prog() == "")
+    prog(basename(argv[0]));
   return parse_args(&argv[1], &argv[argc]);
 }
 Values& OptionParser::parse_args(const vector<string>& v) {
