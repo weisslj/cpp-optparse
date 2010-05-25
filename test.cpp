@@ -40,7 +40,11 @@ struct MyCallback : public optparse::Callback {
 
 int main(int argc, char *argv[])
 {
+#ifndef DISABLE_USAGE
   const string usage = "usage: %prog [OPTION]... DIR [FILE]...";
+#else
+  const string usage = SUPPRESS_USAGE;
+#endif
   const string version = "%prog 1.0\nCopyright (C) 2010 Johannes Weißl\n"
     "License GPLv3+: GNU GPL version 3 or later "
     "<http://gnu.org/licenses/gpl.html>.\n"
@@ -97,6 +101,7 @@ int main(int argc, char *argv[])
   parser.add_option("-C", "--choices") .choices(&choices[0], &choices[3]);
   parser.add_option("-m", "--more") .action("append");
   parser.add_option("--more-milk") .action("append_const") .set_const("milk");
+  parser.add_option("--hidden") .help(SUPPRESS_HELP);
 
   MyCallback mc;
   parser.add_option("-K", "--callback") .action("callback") .callback(mc) .help("callback test");
@@ -134,6 +139,7 @@ int main(int argc, char *argv[])
     for (Values::iterator it = options.all("more_milk").begin(); it != options.all("more_milk").end(); ++it)
       out(*it);
   }
+  cout << "hidden: " << options["hidden"] << endl;
   cout << "group: " << (options.get("g") ? "true" : "false") << endl;
 
   cout << endl << "leftover arguments: " << endl;

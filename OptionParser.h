@@ -81,6 +81,9 @@ typedef std::map<std::string,std::string> strMap;
 typedef std::map<std::string,std::list<std::string> > lstMap;
 typedef std::map<std::string,Option const*> optMap;
 
+const char* const SUPPRESS_HELP = "SUPPRESS" "HELP";
+const char* const SUPPRESS_USAGE = "SUPPRESS" "USAGE";
+
 //! Class for automatic conversion from string -> anytype
 class Value {
   public:

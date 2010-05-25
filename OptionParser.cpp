@@ -354,7 +354,8 @@ string OptionParser::format_option_help(unsigned int indent /* = 2 */) const {
     return ss.str();
 
   for (list<Option>::const_iterator it = _opts.begin(); it != _opts.end(); ++it) {
-    ss << it->format_help(indent);
+    if (it->help() != SUPPRESS_HELP)
+      ss << it->format_help(indent);
   }
 
   return ss.str();
@@ -363,7 +364,7 @@ string OptionParser::format_option_help(unsigned int indent /* = 2 */) const {
 string OptionParser::format_help() const {
   stringstream ss;
 
-  if (usage() != "")
+  if (usage() != SUPPRESS_USAGE)
     ss << get_usage() << endl;
 
   if (description() != "")
@@ -403,10 +404,14 @@ string OptionParser::format_usage(const string& u) const {
   return ss.str();
 }
 string OptionParser::get_usage() const {
+  if (usage() == SUPPRESS_USAGE)
+    return string("");
   return format_usage(str_replace(usage(), "%prog", prog()));
 }
 void OptionParser::print_usage(ostream& out) const {
-  out << get_usage() << endl;
+  string u = get_usage();
+  if (u != "")
+    out << u << endl;
 }
 void OptionParser::print_usage() const {
   print_usage(cout);
