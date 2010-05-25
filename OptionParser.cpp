@@ -97,8 +97,8 @@ static string str_inc(const string& s) {
   ss << i+1;
   return ss.str();
 }
-static size_t cols() {
-  size_t n = 80;
+static unsigned int cols() {
+  unsigned int n = 80;
   const char *s = getenv("COLUMNS");
   if (s)
     istringstream(s) >> n;
@@ -507,8 +507,8 @@ string Option::format_option_help(unsigned int indent /* = 2 */) const {
 string Option::format_help(unsigned int indent /* = 2 */) const {
   stringstream ss;
   string h = format_option_help(indent);
-  size_t width = cols();
-  size_t opt_width = min(width*3/10, 36u);
+  unsigned int width = cols();
+  unsigned int opt_width = min(width*3/10, 36u);
   bool indent_first = false;
   ss << h;
   // if the option list is too long, start a new paragraph
