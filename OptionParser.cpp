@@ -310,15 +310,19 @@ void OptionParser::process_opt(const Option& o, const string& opt, const string&
     if (err != "")
       error(err);
     _values[o.dest()] = value;
+    _values.is_set_by_user(o.dest(), true);
   }
   else if (o.action() == "store_const") {
     _values[o.dest()] = o.get_const();
+    _values.is_set_by_user(o.dest(), true);
   }
   else if (o.action() == "store_true") {
     _values[o.dest()] = "1";
+    _values.is_set_by_user(o.dest(), true);
   }
   else if (o.action() == "store_false") {
     _values[o.dest()] = "0";
+    _values.is_set_by_user(o.dest(), true);
   }
   else if (o.action() == "append") {
     string err = o.check_type(opt, value);
@@ -326,13 +330,16 @@ void OptionParser::process_opt(const Option& o, const string& opt, const string&
       error(err);
     _values[o.dest()] = value;
     _values.all(o.dest()).push_back(value);
+    _values.is_set_by_user(o.dest(), true);
   }
   else if (o.action() == "append_const") {
     _values[o.dest()] = o.get_const();
     _values.all(o.dest()).push_back(o.get_const());
+    _values.is_set_by_user(o.dest(), true);
   }
   else if (o.action() == "count") {
     _values[o.dest()] = str_inc(_values[o.dest()]);
+    _values.is_set_by_user(o.dest(), true);
   }
   else if (o.action() == "help") {
     print_help();
@@ -442,6 +449,12 @@ const string& Values::operator[] (const string& d) const {
   strMap::const_iterator it = _map.find(d);
   static const string empty = "";
   return (it != _map.end()) ? it->second : empty;
+}
+void Values::is_set_by_user(const std::string& d, bool yes) {
+  if (yes)
+    _userSet.insert(d);
+  else
+    _userSet.erase(d);
 }
 ////////// } class Values //////////
 

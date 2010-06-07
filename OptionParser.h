@@ -111,6 +111,8 @@ class Values {
     const std::string& operator[] (const std::string& d) const;
     std::string& operator[] (const std::string& d) { return _map[d]; }
     bool is_set(const std::string& d) const { return _map.find(d) != _map.end(); }
+    bool is_set_by_user(const std::string& d) const { return _userSet.find(d) != _userSet.end(); }
+    void is_set_by_user(const std::string& d, bool yes);
     Value get(const std::string& d) const { return (is_set(d)) ? Value((*this)[d]) : Value(); }
 
     typedef std::list<std::string>::iterator iterator;
@@ -121,6 +123,7 @@ class Values {
   private:
     strMap _map;
     lstMap _appendMap;
+    std::set<std::string> _userSet;
 };
 
 class OptionParser {
