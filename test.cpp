@@ -10,7 +10,8 @@ using namespace std;
 
 using namespace optparse;
 
-struct Output {
+class Output {
+public:
   Output(const string& d) : delim(d), first(true) {}
   void operator() (const string& s) {
     if (first)
@@ -24,9 +25,10 @@ struct Output {
   bool first;
 };
 
-struct MyCallback : public optparse::Callback {
+class MyCallback : public optparse::Callback {
+public:
   MyCallback() : counter(0) {}
-  void operator() (const Option& option, const std::string& opt, const std::string& val, const OptionParser& parser) {
+  void operator() (const Option& option, const string& opt, const string& val, const OptionParser& parser) {
     counter++;
     cout << "--- MyCallback --- " << counter << ". time called" << endl;
     cout << "--- MyCallback --- option.action(): " << option.action() << endl;

@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include <algorithm>
 #include <complex>
+#include <ciso646>
 
 #if defined(ENABLE_NLS) && ENABLE_NLS
 # include <libintl.h>
@@ -23,7 +24,8 @@ using namespace std;
 namespace optparse {
 
 ////////// auxiliary (string) functions { //////////
-struct str_wrap {
+class str_wrap {
+public:
   str_wrap(const string& l, const string& r) : lwrap(l), rwrap(r) {}
   str_wrap(const string& w) : lwrap(w), rwrap(w) {}
   string operator() (const string& s) { return lwrap + s + rwrap; }
@@ -99,9 +101,11 @@ static string str_inc(const string& s) {
 }
 static unsigned int cols() {
   unsigned int n = 80;
+#ifndef _WIN32
   const char *s = getenv("COLUMNS");
   if (s)
     istringstream(s) >> n;
+#endif
   return n;
 }
 static string basename(const string& s) {
@@ -427,7 +431,7 @@ void OptionParser::print_usage() const {
 string OptionParser::get_version() const {
   return str_replace(_version, "%prog", prog());
 }
-void OptionParser::print_version(std::ostream& out) const {
+void OptionParser::print_version(ostream& out) const {
   out << get_version() << endl;
 }
 void OptionParser::print_version() const {
@@ -450,7 +454,7 @@ const string& Values::operator[] (const string& d) const {
   static const string empty = "";
   return (it != _map.end()) ? it->second : empty;
 }
-void Values::is_set_by_user(const std::string& d, bool yes) {
+void Values::is_set_by_user(const string& d, bool yes) {
   if (yes)
     _userSet.insert(d);
   else
