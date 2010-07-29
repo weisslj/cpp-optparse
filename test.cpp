@@ -164,6 +164,7 @@ int main(int argc, char *argv[])
     targv[i] = (TCHAR *) malloc((len + 1) * sizeof(TCHAR));
     mbstowcs(targv[i], argv[i], len);
   }
+  targv[argc] = NULL;
 #else
   targv = argv;
 #endif
