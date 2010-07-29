@@ -500,7 +500,7 @@ tstring Option::format_option_help(unsigned int indent /* = 2 */) const {
     tstring mvar = metavar();
     if (mvar == _T("")) {
       mvar = type();
-      transform(mvar.begin(), mvar.end(), mvar.begin(), ::toupper);
+      transform(mvar.begin(), mvar.end(), mvar.begin(), _totupper);
      }
     mvar_short = _T(" ") + mvar;
     mvar_long = _T("=") + mvar;

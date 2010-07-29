@@ -79,12 +79,14 @@ typedef wchar_t TCHAR;
 #define _T(x) L ## x
 #define tcout wcout
 #define tcerr wcerr
+#define _totupper ::towupper
 
 #else
 typedef char TCHAR;
 #define _T(x) x
 #define tcout cout
 #define tcerr cerr
+#define _totupper ::toupper
 
 #endif
 
