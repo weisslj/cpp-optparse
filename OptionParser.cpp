@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include <algorithm>
 #include <complex>
+#include <ciso646>
 
 #if defined(ENABLE_NLS) && ENABLE_NLS
 # include <libintl.h>
