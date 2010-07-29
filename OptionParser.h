@@ -70,6 +70,31 @@
 
 namespace optparse {
 
+#if defined(OS_WINDOWS)
+#include <windows.h>
+#include <tchar.h>
+
+#elif defined(USE_WCHAR)
+typedef wchar_t TCHAR;
+#define _T(x) L ## x
+#define tcout wcout
+#define tcerr wcerr
+
+#else
+typedef char TCHAR;
+#define _T(x) x
+#define tcout cout
+#define tcerr cerr
+
+#endif
+
+typedef std::basic_string<TCHAR> tstring;
+typedef std::basic_ostream<TCHAR> tostream;
+typedef std::basic_ostringstream<TCHAR> tostringstream;
+typedef std::basic_istringstream<TCHAR> tistringstream;
+typedef std::basic_stringstream<TCHAR> tstringstream;
+
+
 class OptionParser;
 class OptionGroup;
 class Option;
@@ -77,53 +102,53 @@ class Values;
 class Value;
 class Callback;
 
-typedef std::map<std::string,std::string> strMap;
-typedef std::map<std::string,std::list<std::string> > lstMap;
-typedef std::map<std::string,Option const*> optMap;
+typedef std::map<tstring,tstring> strMap;
+typedef std::map<tstring,std::list<tstring> > lstMap;
+typedef std::map<tstring,Option const*> optMap;
 
-const char* const SUPPRESS_HELP = "SUPPRESS" "HELP";
-const char* const SUPPRESS_USAGE = "SUPPRESS" "USAGE";
+const TCHAR* const SUPPRESS_HELP = _T("SUPPRESS" "HELP");
+const TCHAR* const SUPPRESS_USAGE = _T("SUPPRESS" "USAGE");
 
 //! Class for automatic conversion from string -> anytype
 class Value {
   public:
     Value() : str(), valid(false) {}
-    Value(const std::string& v) : str(v), valid(true) {}
-    operator const char*() { return str.c_str(); }
-    operator bool() { bool t; return (valid && (std::istringstream(str) >> t)) ? t : false; }
-    operator short() { short t; return (valid && (std::istringstream(str) >> t)) ? t : 0; }
-    operator unsigned short() { unsigned short t; return (valid && (std::istringstream(str) >> t)) ? t : 0; }
-    operator int() { int t; return (valid && (std::istringstream(str) >> t)) ? t : 0; }
-    operator unsigned int() { unsigned int t; return (valid && (std::istringstream(str) >> t)) ? t : 0; }
-    operator long() { long t; return (valid && (std::istringstream(str) >> t)) ? t : 0; }
-    operator unsigned long() { unsigned long t; return (valid && (std::istringstream(str) >> t)) ? t : 0; }
-    operator float() { float t; return (valid && (std::istringstream(str) >> t)) ? t : 0; }
-    operator double() { double t; return (valid && (std::istringstream(str) >> t)) ? t : 0; }
-    operator long double() { long double t; return (valid && (std::istringstream(str) >> t)) ? t : 0; }
+    Value(const tstring& v) : str(v), valid(true) {}
+    operator const TCHAR*() { return str.c_str(); }
+    operator bool() { bool t; return (valid && (tistringstream(str) >> t)) ? t : false; }
+    operator short() { short t; return (valid && (tistringstream(str) >> t)) ? t : 0; }
+    operator unsigned short() { unsigned short t; return (valid && (tistringstream(str) >> t)) ? t : 0; }
+    operator int() { int t; return (valid && (tistringstream(str) >> t)) ? t : 0; }
+    operator unsigned int() { unsigned int t; return (valid && (tistringstream(str) >> t)) ? t : 0; }
+    operator long() { long t; return (valid && (tistringstream(str) >> t)) ? t : 0; }
+    operator unsigned long() { unsigned long t; return (valid && (tistringstream(str) >> t)) ? t : 0; }
+    operator float() { float t; return (valid && (tistringstream(str) >> t)) ? t : 0; }
+    operator double() { double t; return (valid && (tistringstream(str) >> t)) ? t : 0; }
+    operator long double() { long double t; return (valid && (tistringstream(str) >> t)) ? t : 0; }
  private:
-    const std::string str;
+    const tstring str;
     bool valid;
 };
 
 class Values {
   public:
     Values() : _map() {}
-    const std::string& operator[] (const std::string& d) const;
-    std::string& operator[] (const std::string& d) { return _map[d]; }
-    bool is_set(const std::string& d) const { return _map.find(d) != _map.end(); }
-    bool is_set_by_user(const std::string& d) const { return _userSet.find(d) != _userSet.end(); }
-    void is_set_by_user(const std::string& d, bool yes);
-    Value get(const std::string& d) const { return (is_set(d)) ? Value((*this)[d]) : Value(); }
+    const tstring& operator[] (const tstring& d) const;
+    tstring& operator[] (const tstring& d) { return _map[d]; }
+    bool is_set(const tstring& d) const { return _map.find(d) != _map.end(); }
+    bool is_set_by_user(const tstring& d) const { return _userSet.find(d) != _userSet.end(); }
+    void is_set_by_user(const tstring& d, bool yes);
+    Value get(const tstring& d) const { return (is_set(d)) ? Value((*this)[d]) : Value(); }
 
-    typedef std::list<std::string>::iterator iterator;
-    typedef std::list<std::string>::const_iterator const_iterator;
-    std::list<std::string>& all(const std::string& d) { return _appendMap[d]; }
-    const std::list<std::string>& all(const std::string& d) const { return _appendMap.find(d)->second; }
+    typedef std::list<tstring>::iterator iterator;
+    typedef std::list<tstring>::const_iterator const_iterator;
+    std::list<tstring>& all(const tstring& d) { return _appendMap[d]; }
+    const std::list<tstring>& all(const tstring& d) const { return _appendMap.find(d)->second; }
 
   private:
     strMap _map;
     lstMap _appendMap;
-    std::set<std::string> _userSet;
+    std::set<tstring> _userSet;
 };
 
 class OptionParser {
@@ -131,80 +156,80 @@ class OptionParser {
     OptionParser();
     virtual ~OptionParser() {}
 
-    OptionParser& usage(const std::string& u) { set_usage(u); return *this; }
-    OptionParser& version(const std::string& v) { _version = v; return *this; }
-    OptionParser& description(const std::string& d) { _description = d; return *this; }
+    OptionParser& usage(const tstring& u) { set_usage(u); return *this; }
+    OptionParser& version(const tstring& v) { _version = v; return *this; }
+    OptionParser& description(const tstring& d) { _description = d; return *this; }
     OptionParser& add_help_option(bool h) { _add_help_option = h; return *this; }
     OptionParser& add_version_option(bool v) { _add_version_option = v; return *this; }
-    OptionParser& prog(const std::string& p) { _prog = p; return *this; }
-    OptionParser& epilog(const std::string& e) { _epilog = e; return *this; }
-    OptionParser& set_defaults(const std::string& dest, const std::string& val) {
+    OptionParser& prog(const tstring& p) { _prog = p; return *this; }
+    OptionParser& epilog(const tstring& e) { _epilog = e; return *this; }
+    OptionParser& set_defaults(const tstring& dest, const tstring& val) {
       _defaults[dest] = val; return *this;
     }
     OptionParser& enable_interspersed_args() { _interspersed_args = true; return *this; }
     OptionParser& disable_interspersed_args() { _interspersed_args = false; return *this; }
     OptionParser& add_option_group(const OptionGroup& group);
 
-    const std::string& usage() const { return _usage; }
-    const std::string& version() const { return _version; }
-    const std::string& description() const { return _description; }
+    const tstring& usage() const { return _usage; }
+    const tstring& version() const { return _version; }
+    const tstring& description() const { return _description; }
     bool add_help_option() const { return _add_help_option; }
     bool add_version_option() const { return _add_version_option; }
-    const std::string& prog() const { return _prog; }
-    const std::string& epilog() const { return _epilog; }
+    const tstring& prog() const { return _prog; }
+    const tstring& epilog() const { return _epilog; }
     bool interspersed_args() const { return _interspersed_args; }
 
-    Option& add_option(const std::string& opt);
-    Option& add_option(const std::string& opt1, const std::string& opt2);
-    Option& add_option(const std::string& opt1, const std::string& opt2, const std::string& opt3);
-    Option& add_option(const std::vector<std::string>& opt);
+    Option& add_option(const tstring& opt);
+    Option& add_option(const tstring& opt1, const tstring& opt2);
+    Option& add_option(const tstring& opt1, const tstring& opt2, const tstring& opt3);
+    Option& add_option(const std::vector<tstring>& opt);
 
-    Values& parse_args(int argc, char const* const* argv);
-    Values& parse_args(const std::vector<std::string>& args);
+    Values& parse_args(int argc, TCHAR const* const* argv);
+    Values& parse_args(const std::vector<tstring>& args);
     template<typename InputIterator>
     Values& parse_args(InputIterator begin, InputIterator end) {
-      return parse_args(std::vector<std::string>(begin, end));
+      return parse_args(std::vector<tstring>(begin, end));
     }
 
-    const std::list<std::string>& args() const { return _leftover; }
-    std::vector<std::string> args() {
-      return std::vector<std::string>(_leftover.begin(), _leftover.end());
+    const std::list<tstring>& args() const { return _leftover; }
+    std::vector<tstring> args() {
+      return std::vector<tstring>(_leftover.begin(), _leftover.end());
     }
 
-    std::string format_help() const;
-    std::string format_option_help(unsigned int indent = 2) const;
+    tstring format_help() const;
+    tstring format_option_help(unsigned int indent = 2) const;
     void print_help() const;
 
-    void set_usage(const std::string& u);
-    std::string get_usage() const;
-    void print_usage(std::ostream& out) const;
+    void set_usage(const tstring& u);
+    tstring get_usage() const;
+    void print_usage(tostream& out) const;
     void print_usage() const;
 
-    std::string get_version() const;
-    void print_version(std::ostream& out) const;
+    tstring get_version() const;
+    void print_version(tostream& out) const;
     void print_version() const;
 
-    void error(const std::string& msg) const;
+    void error(const tstring& msg) const;
     void exit() const;
 
   private:
-    const Option& lookup_short_opt(const std::string& opt) const;
-    const Option& lookup_long_opt(const std::string& opt) const;
+    const Option& lookup_short_opt(const tstring& opt) const;
+    const Option& lookup_long_opt(const tstring& opt) const;
 
-    void handle_short_opt(const std::string& opt, const std::string& arg);
-    void handle_long_opt(const std::string& optstr);
+    void handle_short_opt(const tstring& opt, const tstring& arg);
+    void handle_long_opt(const tstring& optstr);
 
-    void process_opt(const Option& option, const std::string& opt, const std::string& value);
+    void process_opt(const Option& option, const tstring& opt, const tstring& value);
 
-    std::string format_usage(const std::string& u) const;
+    tstring format_usage(const tstring& u) const;
 
-    std::string _usage;
-    std::string _version;
-    std::string _description;
+    tstring _usage;
+    tstring _version;
+    tstring _description;
     bool _add_help_option;
     bool _add_version_option;
-    std::string _prog;
-    std::string _epilog;
+    tstring _prog;
+    tstring _epilog;
     bool _interspersed_args;
 
     Values _values;
@@ -215,84 +240,83 @@ class OptionParser {
     strMap _defaults;
     std::list<OptionGroup const*> _groups;
 
-    std::list<std::string> _remaining;
-    std::list<std::string> _leftover;
+    std::list<tstring> _remaining;
+    std::list<tstring> _leftover;
 };
 
 class OptionGroup : public OptionParser {
   public:
-    OptionGroup(const OptionParser& p, const std::string& t, const std::string& d = "") :
+    OptionGroup(const OptionParser& p, const tstring& t, const tstring& d = tstring()) :
       _parser(p), _title(t), _group_description(d) {}
     virtual ~OptionGroup() {}
 
-    OptionGroup& title(const std::string& t) { _title = t; return *this; }
-    OptionGroup& group_description(const std::string& d) { _group_description = d; return *this; }
-    const std::string& title() const { return _title; }
-    const std::string& group_description() const { return _group_description; }
+    OptionGroup& title(const tstring& t) { _title = t; return *this; }
+    OptionGroup& group_description(const tstring& d) { _group_description = d; return *this; }
+    const tstring& title() const { return _title; }
+    const tstring& group_description() const { return _group_description; }
 
   private:
     const OptionParser& _parser;
-    std::string _title;
-    std::string _group_description;
+    tstring _title;
+    tstring _group_description;
 };
 
 class Option {
   public:
-    Option() : _action("store"), _type("string"), _nargs(1), _callback(0) {}
+    Option() : _action(_T("store")), _type(_T("string")), _nargs(1), _callback(0) {}
     virtual ~Option() {}
 
-    Option& action(const std::string& a);
-    Option& type(const std::string& t) { _type = t; return *this; }
-    Option& dest(const std::string& d) { _dest = d; return *this; }
-    Option& set_default(const std::string& d) { _default = d; return *this; }
+    Option& action(const tstring& a);
+    Option& type(const tstring& t) { _type = t; return *this; }
+    Option& dest(const tstring& d) { _dest = d; return *this; }
+    Option& set_default(const tstring& d) { _default = d; return *this; }
     template<typename T>
-    Option& set_default(T t) { std::ostringstream ss; ss << t; _default = ss.str(); return *this; }
+    Option& set_default(T t) { tostringstream ss; ss << t; _default = ss.str(); return *this; }
     Option& nargs(size_t n) { _nargs = n; return *this; }
-    Option& set_const(const std::string& c) { _const = c; return *this; }
+    Option& set_const(const tstring& c) { _const = c; return *this; }
     template<typename InputIterator>
     Option& choices(InputIterator begin, InputIterator end) {
-      _choices.assign(begin, end); type("choice"); return *this;
+      _choices.assign(begin, end); type(_T("choice")); return *this;
     }
-    Option& help(const std::string& h) { _help = h; return *this; }
-    Option& metavar(const std::string& m) { _metavar = m; return *this; }
+    Option& help(const tstring& h) { _help = h; return *this; }
+    Option& metavar(const tstring& m) { _metavar = m; return *this; }
     Option& callback(Callback& c) { _callback = &c; return *this; }
 
-    const std::string& action() const { return _action; }
-    const std::string& type() const { return _type; }
-    const std::string& dest() const { return _dest; }
-    const std::string& get_default() const { return _default; }
+    const tstring& action() const { return _action; }
+    const tstring& type() const { return _type; }
+    const tstring& dest() const { return _dest; }
+    const tstring& get_default() const { return _default; }
     size_t nargs() const { return _nargs; }
-    const std::string& get_const() const { return _const; }
-    const std::list<std::string>& choices() const { return _choices; }
-    const std::string& help() const { return _help; }
-    const std::string& metavar() const { return _metavar; }
+    const tstring& get_const() const { return _const; }
+    const std::list<tstring>& choices() const { return _choices; }
+    const tstring& help() const { return _help; }
+    const tstring& metavar() const { return _metavar; }
     Callback* callback() const { return _callback; }
 
   private:
-    std::string check_type(const std::string& opt, const std::string& val) const;
-    std::string format_option_help(unsigned int indent = 2) const;
-    std::string format_help(unsigned int indent = 2) const;
+    tstring check_type(const tstring& opt, const tstring& val) const;
+    tstring format_option_help(unsigned int indent = 2) const;
+    tstring format_help(unsigned int indent = 2) const;
 
-    std::set<std::string> _short_opts;
-    std::set<std::string> _long_opts;
+    std::set<tstring> _short_opts;
+    std::set<tstring> _long_opts;
 
-    std::string _action;
-    std::string _type;
-    std::string _dest;
-    std::string _default;
+    tstring _action;
+    tstring _type;
+    tstring _dest;
+    tstring _default;
     size_t _nargs;
-    std::string _const;
-    std::list<std::string> _choices;
-    std::string _help;
-    std::string _metavar;
+    tstring _const;
+    std::list<tstring> _choices;
+    tstring _help;
+    tstring _metavar;
     Callback* _callback;
 
     friend class OptionParser;
 };
 
-class Callback {
-public:
-  virtual void operator() (const Option& option, const std::string& opt, const std::string& val, const OptionParser& parser) = 0;
+struct Callback {
+  virtual void operator() (const Option& option, const tstring& opt, const tstring& val, const OptionParser& parser) = 0;
   virtual ~Callback() {}
 };
 
