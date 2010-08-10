@@ -68,11 +68,20 @@
 #include <iostream>
 #include <sstream>
 
+#include <AtlBase.h>
+
 namespace optparse {
 
 #if defined(OS_WINDOWS)
 #include <windows.h>
 #include <tchar.h>
+#if defined(UNICODE) || defined(_UNICODE)
+#define tcout wcout
+#define tcerr wcerr
+#else
+#define tcout cout
+#define tcerr cerr
+#endif
 
 #elif defined(USE_WCHAR)
 typedef wchar_t TCHAR;
@@ -102,14 +111,14 @@ class OptionGroup;
 class Option;
 class Values;
 class Value;
-class Callback;
+struct Callback;
 
 typedef std::map<tstring,tstring> strMap;
 typedef std::map<tstring,std::list<tstring> > lstMap;
 typedef std::map<tstring,Option const*> optMap;
 
-const TCHAR* const SUPPRESS_HELP = _T("SUPPRESS" "HELP");
-const TCHAR* const SUPPRESS_USAGE = _T("SUPPRESS" "USAGE");
+const TCHAR* const SUPPRESS_HELP = _T("SUPPRESS") _T("HELP");
+const TCHAR* const SUPPRESS_USAGE = _T("SUPPRESS") _T("USAGE");
 
 //! Class for automatic conversion from string -> anytype
 class Value {
