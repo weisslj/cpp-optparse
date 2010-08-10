@@ -73,7 +73,6 @@
 namespace optparse {
 
 #if defined(OS_WINDOWS)
-#include <windows.h>
 #include <tchar.h>
 #if defined(UNICODE) || defined(_UNICODE)
 #define tcout wcout
