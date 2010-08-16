@@ -68,12 +68,14 @@
 #include <iostream>
 #include <sstream>
 
-#include <AtlBase.h>
+#ifdef OS_WINDOWS
+// #include <AtlBase.h>
+#include <tchar.h>
+#endif
 
 namespace optparse {
 
 #if defined(OS_WINDOWS)
-#include <tchar.h>
 #if defined(UNICODE) || defined(_UNICODE)
 #define tcout wcout
 #define tcerr wcerr
@@ -110,7 +112,7 @@ class OptionGroup;
 class Option;
 class Values;
 class Value;
-struct Callback;
+class Callback;
 
 typedef std::map<tstring,tstring> strMap;
 typedef std::map<tstring,std::list<tstring> > lstMap;
@@ -325,7 +327,8 @@ class Option {
     friend class OptionParser;
 };
 
-struct Callback {
+class Callback {
+public:
   virtual void operator() (const Option& option, const tstring& opt, const tstring& val, const OptionParser& parser) = 0;
   virtual ~Callback() {}
 };

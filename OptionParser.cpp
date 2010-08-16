@@ -24,7 +24,8 @@ using namespace std;
 namespace optparse {
 
 ////////// auxiliary (string) functions { //////////
-struct str_wrap {
+class str_wrap {
+public:
   str_wrap(const tstring& l, const tstring& r) : lwrap(l), rwrap(r) {}
   str_wrap(const tstring& w) : lwrap(w), rwrap(w) {}
   tstring operator() (const tstring& s) { return lwrap + s + rwrap; }
