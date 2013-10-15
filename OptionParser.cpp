@@ -305,6 +305,14 @@ Values& OptionParser::parse_args(const vector<string>& v) {
         _values[it->dest()] = it->get_default();
   }
 
+  for (list<OptionGroup const*>::const_iterator group_it = _groups.begin(); group_it != _groups.end(); ++group_it) {
+    const OptionGroup& group = **group_it;
+    for (list<Option>::const_iterator it = group._opts.begin(); it != group._opts.end(); ++it) {
+        if (it->get_default() != "" and not _values.is_set(it->dest()))
+            _values[it->dest()] = it->get_default();
+    }
+  }
+
   return _values;
 }
 
