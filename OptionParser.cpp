@@ -171,6 +171,9 @@ Option& OptionParser::add_option(const vector<string>& v) {
 OptionParser& OptionParser::add_option_group(const OptionGroup& group) {
   for (list<Option>::const_iterator oit = group._opts.begin(); oit != group._opts.end(); ++oit) {
     const Option& option = *oit;
+    _opts.resize(_opts.size()+1);
+    Option& listOption = _opts.back();
+    listOption = option;
     for (set<string>::const_iterator it = option._short_opts.begin(); it != option._short_opts.end(); ++it)
       _optmap_s[*it] = &option;
     for (set<string>::const_iterator it = option._long_opts.begin(); it != option._long_opts.end(); ++it)
