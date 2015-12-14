@@ -6,7 +6,7 @@ optparse should feel at home:
 http://docs.python.org/library/optparse.html
 
 Copyright (C) 2010 Johannes Weißl <jargon@molb.org>
-License: your favourite BSD-style license
+License: MIT License
 
 Design decisions:
 - elegant and easy usage more important than speed / flexibility
