@@ -8,6 +8,7 @@ Python optparse API. Although incomplete, anyone familiar to
 - License: MIT License
 
 ## Design decisions
+
 - elegant and easy usage more important than speed / flexibility
 - shortness more important than feature completeness
   * no unicode
@@ -15,18 +16,16 @@ Python optparse API. Although incomplete, anyone familiar to
 
 ## FAQ
 
-### Why not use getopt/getopt_long?
-- not C++ / not completely POSIX
-- too cumbersome to use, would need lot of additional code
-
-### Why not use Boost.Program_options?
-- boost not installed on all target platforms (esp. cluster, HPC, ...)
-- too big to include just for option handling:
-  322 *.h (44750 lines) + 7 *.cpp (2078 lines)
-
-### Why not use tclap/Opag/Options/CmdLine/Anyoption/Argument_helper/...?
-- no reason, writing one is faster than code inspection :-)
-- similarity to Python desired for faster learning curve
+- Why not use getopt/getopt_long?
+  * not C++ / not completely POSIX
+  * too cumbersome to use, would need lot of additional code
+- Why not use Boost.Program_options?
+  * boost not installed on all target platforms (esp. cluster, HPC, ...)
+  * too big to include just for option handling:
+    322 *.h (44750 lines) + 7 *.cpp (2078 lines)
+- Why not use tclap/Opag/Options/CmdLine/Anyoption/Argument_helper/...?
+  * no reason, writing one is faster than code inspection :-)
+  * similarity to Python desired for faster learning curve
 
 ## Future work
 - nargs > 1?
