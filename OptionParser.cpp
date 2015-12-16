@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2010 Johannes Weißl <jargon@molb.org>
- * License: your favourite BSD-style license
+ * License: MIT License
  *
  * See OptionParser.h for help.
  */
