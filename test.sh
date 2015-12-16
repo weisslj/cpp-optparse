@@ -77,4 +77,4 @@ c --hidden foo
 # c -K # FIXME: bug
 # c -K x # FIXME: bug
 c --no-clear foo bar -k -k z -v -n3 "x y" -i 8 -f 3.2 -c 2
-# DISABLE_INTERSPERSED_ARGS=1 c -k a -k b
+DISABLE_INTERSPERSED_ARGS=1 c -k a -k b

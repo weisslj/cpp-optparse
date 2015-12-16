@@ -74,10 +74,9 @@ int main(int argc, char *argv[])
     .version(version)
     .description(desc)
     .epilog(epilog)
-#ifdef DISABLE_INTERSPERSED_ARGS
-    .disable_interspersed_args()
-#endif
   ;
+  if (getenv("DISABLE_INTERSPERSED_ARGS"))
+    parser.disable_interspersed_args();
 
   parser.set_defaults("verbosity", "50");
   parser.set_defaults("no_clear", "0");
