@@ -136,7 +136,9 @@ int main(int argc, char *argv[])
   }
   cout << "complex: " << c << endl;
   cout << "choices: " << (const char*) options.get("choices") << endl;
+#if __cplusplus >= 201103L
   cout << "choices-list: " << (const char*) options.get("choices-list") << endl;
+#endif
   cout << "more: ";
   for_each(options.all("more").begin(), options.all("more").end(), Output(", "));
   cout << "more_milk: ";
