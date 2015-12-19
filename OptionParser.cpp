@@ -223,7 +223,7 @@ const Option& OptionParser::lookup_long_opt(const string& opt) const {
     if (it->first.compare(0, opt.length(), opt) == 0) {
       matching.push_back(it->first);
       if (it->first.length() == opt.length())
-          break;
+        break;
     }
   }
   if (matching.size() > 1) {
@@ -312,7 +312,7 @@ Values& OptionParser::parse_args(const vector<string>& v) {
 
   for (list<Option>::const_iterator it = _opts.begin(); it != _opts.end(); ++it) {
     if (it->get_default() != "" and not _values.is_set(it->dest()))
-        _values[it->dest()] = it->get_default();
+      _values[it->dest()] = it->get_default();
   }
 
   for (list<OptionGroup const*>::iterator group_it = _groups.begin(); group_it != _groups.end(); ++group_it) {

@@ -48,7 +48,7 @@
  * parser.add_option("-q", "--quiet")
  *                   .action("store_false") .dest("verbose") .set_default("1")
  *                   .help("don't print status messages to stdout");
- * 
+ *
  * optparse::Values options = parser.parse_args(argc, argv);
  * vector<string> args = parser.args();
  *
