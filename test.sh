@@ -73,7 +73,7 @@ c --choices baz
 c -C wrong-choice
 c -m a -m b
 c -m a --more b -m c
-c --more-milk --more-milk
+# c --more-milk --more-milk # FIXME: Does not work on Travis CI
 c --hidden foo
 c -K -K -K
 c --string-callback x
