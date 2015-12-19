@@ -61,9 +61,13 @@ static string str_replace(const string& s, const string& patt, const string& rep
   str_replace(tmp, patt, repl);
   return tmp;
 }
-static string str_format(const string& s, size_t pre, size_t len, bool indent_first = true) {
+static string str_format(const string& str, size_t pre, size_t len, bool running_text = true, bool indent_first = true) {
+  string s = str;
   stringstream ss;
   string p;
+  len -= 2; // Python seems to not use full length
+  if (running_text)
+    replace(s.begin(), s.end(), '\n', ' ');
   if (indent_first)
     p = string(pre, ' ');
 
@@ -267,12 +271,12 @@ Values& OptionParser::parse_args(const vector<string>& v) {
 
   _remaining.assign(v.begin(), v.end());
 
-  if (add_version_option() and version() != "") {
-    add_option("--version") .action("version") .help(_("show program's version number and exit"));
-    _opts.splice(_opts.begin(), _opts, --(_opts.end()));
-  }
   if (add_help_option()) {
     add_option("-h", "--help") .action("help") .help(_("show this help message and exit"));
+    _opts.splice(_opts.begin(), _opts, --(_opts.end()));
+  }
+  if (add_version_option() and version() != "") {
+    add_option("--version") .action("version") .help(_("show program's version number and exit"));
     _opts.splice(_opts.begin(), _opts, --(_opts.end()));
   }
 
@@ -408,8 +412,10 @@ string OptionParser::format_help() const {
   for (list<OptionGroup const*>::const_iterator it = _groups.begin(); it != _groups.end(); ++it) {
     const OptionGroup& group = **it;
     ss << endl << "  " << group.title() << ":" << endl;
-    if (group.group_description() != "")
-      ss << str_format(group.group_description(), 4, cols()) << endl;
+    if (group.group_description() != "") {
+      unsigned int malus = 4; // Python seems to not use full length
+      ss << str_format(group.group_description(), 4, cols() - malus) << endl;
+    }
     ss << group.format_option_help(4);
   }
 
@@ -521,7 +527,7 @@ string Option::format_option_help(unsigned int indent /* = 2 */) const {
   if (nargs() == 1) {
     string mvar = metavar();
     if (mvar == "") {
-      mvar = type();
+      mvar = dest();
       transform(mvar.begin(), mvar.end(), mvar.begin(), ::toupper);
      }
     mvar_short = " " + mvar;
@@ -560,7 +566,7 @@ string Option::format_help(unsigned int indent /* = 2 */) const {
   }
   if (help() != "") {
     string help_str = (get_default() != "") ? str_replace(help(), "%default", get_default()) : help();
-    ss << str_format(help_str, opt_width, width, indent_first);
+    ss << str_format(help_str, opt_width, width, false, indent_first);
   }
   return ss.str();
 }

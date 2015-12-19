@@ -2,6 +2,8 @@
 # -*- mode: sh; coding: utf-8; indent-tabs-mode: nil -*-
 # vim: set filetype=sh fileencoding=utf-8 expandtab sw=4 sts=4:
 
+export COLUMNS=80
+
 c () {
     echo "$(printf "%q " ./testprog "$@")"
     local t_stdout_cpp=$(mktemp --tmpdir cpp-stdout-optparse.XXXXXXXXXX)
