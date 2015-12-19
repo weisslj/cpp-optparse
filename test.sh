@@ -29,6 +29,7 @@ c () {
 }
 
 c
+c --str # ambiguous option
 c -Z # unknown argument
 c --argument-does-not-exist
 # c --version # TODO: align formatting
