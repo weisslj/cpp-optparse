@@ -13,12 +13,12 @@ c () {
     ./t/testprog "$@" >"$t_stdout_pyt" 2>"$t_stderr_pyt"
     status_pyt=$?
     if ! cmp -s "$t_stderr_cpp" "$t_stderr_pyt" ; then
-        diff -u "$t_stderr_cpp" "$t_stderr_pyt"
+        diff -au "$t_stderr_cpp" "$t_stderr_pyt"
         exit 1
     fi
     rm -f "$t_stderr_cpp" "$t_stderr_pyt"
     if ! cmp -s "$t_stdout_cpp" "$t_stdout_pyt" ; then
-        diff -u "$t_stdout_cpp" "$t_stdout_pyt"
+        diff -au "$t_stdout_cpp" "$t_stdout_pyt"
         exit 1
     fi
     rm -f "$t_stdout_cpp" "$t_stdout_pyt"
