@@ -71,7 +71,7 @@ c -C foo
 c --choices baz
 c -C wrong-choice
 c -m a -m b
-# c -m a --more b -m c # FIXME: bug
+c -m a --more b -m c
 c --more-milk --more-milk
 c --hidden foo
 # c -K # FIXME: bug

@@ -216,11 +216,14 @@ const Option& OptionParser::lookup_long_opt(const string& opt) const {
 
   list<string> matching;
   for (optMap::const_iterator it = _optmap_l.begin(); it != _optmap_l.end(); ++it) {
-    if (it->first.compare(0, opt.length(), opt) == 0)
+    if (it->first.compare(0, opt.length(), opt) == 0) {
       matching.push_back(it->first);
+      if (it->first.length() == opt.length())
+          break;
+    }
   }
   if (matching.size() > 1) {
-    string x = str_join(", ", matching.begin(), matching.end());
+    string x = str_join_trans(", ", matching.begin(), matching.end(), str_wrap("--", ""));
     error(_("ambiguous option") + string(": --") + opt + " (" + x + "?)");
   }
   if (matching.size() == 0)
