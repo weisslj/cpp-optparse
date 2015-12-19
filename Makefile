@@ -6,8 +6,8 @@ CXX = g++
 WARN_FLAGS = -O3 -g -Wall -Wextra -Wabi -Wctor-dtor-privacy -Wnon-virtual-dtor -Wreorder -Wstrict-null-sentinel -Woverloaded-virtual -Wshadow -Wcast-align -Wpointer-arith -Wwrite-strings -Wundef -Wredundant-decls -Werror # -Weffc++
 endif
 
-BIN = test
-OBJECTS = OptionParser.o test.o
+BIN = testprog
+OBJECTS = OptionParser.o testprog.o
 
 $(BIN): $(OBJECTS)
 	$(CXX) -o $@ $(OBJECTS) $(WARN_FLAGS) $(LINKFLAGS)
@@ -15,7 +15,10 @@ $(BIN): $(OBJECTS)
 %.o: %.cpp OptionParser.h
 	$(CXX) $(WARN_FLAGS) $(CXXFLAGS) -c $< -o $@
 
-.PHONY: clean
+.PHONY: clean test
+
+test: testprog
+	./test.sh
 
 clean:
 	rm -f *.o $(BIN)

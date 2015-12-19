@@ -3,14 +3,14 @@
 # vim: set filetype=sh fileencoding=utf-8 expandtab sw=4 sts=4:
 
 c () {
-    echo "$(printf "%q " ./test "$@")"
+    echo "$(printf "%q " ./testprog "$@")"
     local t_stdout_cpp=$(mktemp --tmpdir cpp-stdout-optparse.XXXXXXXXXX)
     local t_stderr_cpp=$(mktemp --tmpdir cpp-stderr-optparse.XXXXXXXXXX)
     local t_stdout_pyt=$(mktemp --tmpdir pyt-stdout-optparse.XXXXXXXXXX)
     local t_stderr_pyt=$(mktemp --tmpdir pyt-stderr-optparse.XXXXXXXXXX)
-    ./test "$@" >"$t_stdout_cpp" 2>"$t_stderr_cpp"
+    ./testprog "$@" >"$t_stdout_cpp" 2>"$t_stderr_cpp"
     status_cpp=$?
-    ./t/test "$@" >"$t_stdout_pyt" 2>"$t_stderr_pyt"
+    ./t/testprog "$@" >"$t_stdout_pyt" 2>"$t_stderr_pyt"
     status_pyt=$?
     if ! cmp -s "$t_stderr_cpp" "$t_stderr_pyt" ; then
         diff -u "$t_stderr_cpp" "$t_stderr_pyt"
