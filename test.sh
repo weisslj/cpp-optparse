@@ -32,7 +32,7 @@ c
 c --str # ambiguous option
 c -Z # unknown argument
 c --argument-does-not-exist
-# c --version # TODO: align formatting
+c --version
 # c --help # TODO: align formatting
 c "foo bar" baz ""
 c --clear
