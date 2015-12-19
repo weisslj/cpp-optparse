@@ -244,7 +244,7 @@ class Option {
     virtual ~Option() {}
 
     Option& action(const std::string& a);
-    Option& type(const std::string& t) { _type = t; return *this; }
+    Option& type(const std::string& t);
     Option& dest(const std::string& d) { _dest = d; return *this; }
     Option& set_default(const std::string& d) { _default = d; return *this; }
     template<typename T>

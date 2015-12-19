@@ -372,6 +372,9 @@ void OptionParser::process_opt(const Option& o, const string& opt, const string&
     std::exit(0);
   }
   else if (o.action() == "callback" && o.callback()) {
+    string err = o.check_type(opt, value);
+    if (err != "")
+      error(err);
     (*o.callback())(o, opt, value, *this);
   }
 }
@@ -565,8 +568,19 @@ string Option::format_help(unsigned int indent /* = 2 */) const {
 Option& Option::action(const string& a) {
   _action = a;
   if (a == "store_const" || a == "store_true" || a == "store_false" ||
-      a == "append_const" || a == "count" || a == "help" || a == "version")
+      a == "append_const" || a == "count" || a == "help" || a == "version") {
     nargs(0);
+  } else if (a == "callback") {
+    nargs(0);
+    type("");
+  }
+  return *this;
+}
+
+
+Option& Option::type(const std::string& t) {
+  _type = t;
+  nargs((t == "") ? 0 : 1);
   return *this;
 }
 ////////// } class Option //////////

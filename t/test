@@ -13,8 +13,9 @@ class MyCallback(object):
         self.counter += 1
         print "--- MyCallback --- " + str(self.counter) + ". time called"
         print "--- MyCallback --- option.action(): " + option.action
+        print "--- MyCallback --- option.type(): " + (option.type if option.type else "")
         print "--- MyCallback --- opt: " + opt
-        print "--- MyCallback --- val: " + str(val)
+        print "--- MyCallback --- val: " + (val if val else "")
         print "--- MyCallback --- parser.usage(): " + parser.usage
         print
 
@@ -84,6 +85,7 @@ def main():
 
     mc = MyCallback()
     parser.add_option("-K", "--callback", action="callback", callback=mc, help="callback test")
+    parser.add_option("--string-callback", action="callback", callback=mc, type="string", help="callback test")
 
     group = OptionGroup(parser, "Dangerous Options",
         "Caution: use these options at your own risk. "

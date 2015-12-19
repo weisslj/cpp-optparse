@@ -32,6 +32,7 @@ public:
     counter++;
     cout << "--- MyCallback --- " << counter << ". time called" << endl;
     cout << "--- MyCallback --- option.action(): " << option.action() << endl;
+    cout << "--- MyCallback --- option.type(): " << option.type() << endl;
     cout << "--- MyCallback --- opt: " << opt << endl;
     cout << "--- MyCallback --- val: " << val << endl;
     cout << "--- MyCallback --- parser.usage(): " << parser.usage() << endl;
@@ -106,6 +107,7 @@ int main(int argc, char *argv[])
 
   MyCallback mc;
   parser.add_option("-K", "--callback") .action("callback") .callback(mc) .help("callback test");
+  parser.add_option("--string-callback") .action("callback") .callback(mc) .type("string") .help("callback test");
 
   OptionGroup group = OptionGroup(parser, "Dangerous Options",
       "Caution: use these options at your own risk. "
