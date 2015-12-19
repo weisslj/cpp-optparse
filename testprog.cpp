@@ -105,6 +105,12 @@ int main(int argc, char *argv[])
   parser.add_option("--more-milk") .action("append_const") .set_const("milk");
   parser.add_option("--hidden") .help(SUPPRESS_HELP);
 
+  // test for 325cb47
+  parser.add_option("--option1") .action("store") .type("int") .set_default(1);
+  parser.add_option("--option2") .action("store") .type("int") .set_default("1");
+  parser.set_defaults("option1", "640");
+  parser.set_defaults("option2", 640); // now works
+
   MyCallback mc;
   parser.add_option("-K", "--callback") .action("callback") .callback(mc) .help("callback test");
   parser.add_option("--string-callback") .action("callback") .callback(mc) .type("string") .help("callback test");
@@ -144,6 +150,9 @@ int main(int argc, char *argv[])
   }
   cout << "hidden: " << options["hidden"] << endl;
   cout << "group: " << (options.get("g") ? "true" : "false") << endl;
+
+  cout << "option1: " << (int) options.get("option1") << std::endl;
+  cout << "option2: " << (int) options.get("option2") << std::endl;
 
   cout << endl << "leftover arguments: " << endl;
   for (vector<string>::const_iterator it = args.begin(); it != args.end(); ++it) {

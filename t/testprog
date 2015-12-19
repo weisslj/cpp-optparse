@@ -83,6 +83,12 @@ def main():
     parser.add_option("--more-milk", action="append_const", const="milk")
     parser.add_option("--hidden", help=SUPPRESS_HELP)
 
+    # test for 325cb47
+    parser.add_option("--option1", action="store", type="int", default=1)
+    parser.add_option("--option2", action="store", type="int", default="1")
+    parser.set_defaults(option1="640")
+    parser.set_defaults(option2=640) # now works
+
     mc = MyCallback()
     parser.add_option("-K", "--callback", action="callback", callback=mc, help="callback test")
     parser.add_option("--string-callback", action="callback", callback=mc, type="string", help="callback test")
@@ -117,6 +123,9 @@ def main():
 
     print "hidden:", options.hidden if options.hidden else ""
     print "group:", ("true" if options.g else "false")
+
+    print "option1:", options.option1
+    print "option2:", options.option2
 
     print
     print "leftover arguments: "
