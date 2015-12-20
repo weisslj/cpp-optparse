@@ -9,27 +9,28 @@ Python optparse API. Although incomplete, anyone familiar to
 
 ## Design decisions
 
-- elegant and easy usage more important than speed / flexibility
-- shortness more important than feature completeness
-  * no unicode
-  * no checking for user programming errors
+- Elegant and easy usage more important than speed / flexibility
+- Small size more important than feature completeness, e.g.:
+  * No unicode
+  * No checking for user programming errors
+  * No conflict handlers
+  * No adding of new actions
 
 ## FAQ
 
 - Why not use getopt/getopt_long?
-  * not C++ / not completely POSIX
-  * too cumbersome to use, would need lot of additional code
+  * Not C++ / not completely POSIX
+  * Too cumbersome to use, would need lot of additional code
 - Why not use Boost.Program_options?
-  * boost not installed on all target platforms (esp. cluster, HPC, ...)
-  * too big to include just for option handling:
+  * Boost not installed on all target platforms (esp. cluster, HPC, ...)
+  * Too big to include just for option handling for many projects:
     322 *.h (44750 lines) + 7 *.cpp (2078 lines)
 - Why not use tclap/Opag/Options/CmdLine/Anyoption/Argument_helper/...?
-  * no reason, writing one is faster than code inspection :-)
-  * similarity to Python desired for faster learning curve
+  * Similarity to Python desired for faster learning curve
 
 ## Future work
-- nargs > 1?
-- comments?
+
+- Support nargs > 1?
 
 ## Example
 

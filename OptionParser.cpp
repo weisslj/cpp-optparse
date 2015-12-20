@@ -1,8 +1,7 @@
 /**
  * Copyright (C) 2010 Johannes Weißl <jargon@molb.org>
  * License: MIT License
- *
- * See OptionParser.h for help.
+ * URL: https://github.com/weisslj/cpp-optparse
  */
 
 #include "OptionParser.h"
