@@ -9,7 +9,7 @@ endif
 endif
 
 ifeq ($(CPP11),1)
-STD_FLAGS = -std=c++11
+STD_FLAGS = -std=c++0x
 endif
 
 BIN = testprog
