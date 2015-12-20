@@ -79,6 +79,8 @@ def main():
     parser.add_option("-c", "--complex", action="store", type="complex")
     choices = ["foo", "bar", "baz"]
     parser.add_option("-C", "--choices", choices=choices)
+    choices_list = ["item1", "item2", "item3"]
+    parser.add_option("--choices-list", choices=choices_list)
     parser.add_option("-m", "--more", action="append")
     parser.add_option("--more-milk", action="append_const", const="milk")
     parser.add_option("--hidden", help=SUPPRESS_HELP)
@@ -120,6 +122,7 @@ def main():
         c = options.complex
     print "complex: (%g,%g)" % (c.real, c.imag)
     print "choices:", options.choices if options.choices else ""
+    print "choices-list:", options.choices_list if options.choices_list else ""
     print "more:",
     print ", ".join(options.more if options.more else [])
 
