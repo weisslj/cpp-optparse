@@ -237,7 +237,7 @@ class OptionParser : public OptionContainer {
     std::list<std::string> _remaining;
     std::list<std::string> _leftover;
 
-    friend Option;
+    friend class Option;
 };
 
 class OptionGroup : public OptionContainer {
@@ -255,7 +255,7 @@ class OptionGroup : public OptionContainer {
     const OptionParser& _parser;
     std::string _title;
 
-  friend OptionParser;
+  friend class OptionParser;
 };
 
 class Option {
