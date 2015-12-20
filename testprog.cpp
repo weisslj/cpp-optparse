@@ -13,15 +13,15 @@ using namespace optparse;
 
 class Output {
 public:
-  Output(const string& d) : delim(d), first(true) {}
+  Output(stringstream& ss, const string& d) : stream(ss), delim(d), first(true) {}
   void operator() (const string& s) {
     if (first)
       first = false;
     else
-      cout << delim;
-    cout << s;
+      stream << delim;
+    stream << s;
   }
-  ~Output() { cout << endl; }
+  stringstream& stream;
   const string& delim;
   bool first;
 };
@@ -147,15 +147,16 @@ int main(int argc, char *argv[])
   }
   cout << "complex: " << c << endl;
   cout << "choices: " << (const char*) options.get("choices") << endl;
-  cout << "more: ";
-  for_each(options.all("more").begin(), options.all("more").end(), Output(", "));
-  cout << "more_milk: ";
+  stringstream ss_more;
+  for_each(options.all("more").begin(), options.all("more").end(), Output(ss_more, ", "));
+  cout << "more: " << ss_more.str() << endl;
+  stringstream ss_more_milk;
   {
-    Output* out = new Output(", ");
+    Output out(ss_more_milk, ", ");
     for (Values::iterator it = options.all("more_milk").begin(); it != options.all("more_milk").end(); ++it)
-      (*out)(*it);
-    delete out;
+      out(*it);
   }
+  cout << "more_milk: " << ss_more_milk.str() << endl;
   cout << "hidden: " << options["hidden"] << endl;
   cout << "group: " << (options.get("g") ? "true" : "false") << endl;
 
