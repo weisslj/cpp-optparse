@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
     .help("This is a really long text... very long indeed! It must be wrapped on normal terminals. "
           "Also it should appear not on the same line as the option.");
   parser.add_option("-k") .action("count") .help("how many times?");
-  parser.add_option("-v", "--verbose") .action("store_const") .set_const("100") .dest("verbosity") .help("be verbose!");
+  parser.add_option("--verbose") .action("store_const") .set_const("100") .dest("verbosity") .help("be verbose!");
   parser.add_option("-s", "--silent") .action("store_const") .set_const("0") .dest("verbosity") .help("be silent!");
   parser.add_option("-n", "--number") .type("int") .set_default("1") .metavar("NUM") .help("number of files (default: %default)");
   parser.add_option("-H") .action("help") .help("alternative help");

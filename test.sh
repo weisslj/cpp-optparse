@@ -34,6 +34,7 @@ c
 c --str # ambiguous option
 c -Z # unknown argument
 c --argument-does-not-exist
+c -v
 c --version
 c --help
 c "foo bar" baz ""
@@ -47,7 +48,6 @@ c -x foo
 c --clause foo
 c --sentence foo
 c -k -k -k -k -k
-c -v
 c --verbose
 c -s
 c --silent
