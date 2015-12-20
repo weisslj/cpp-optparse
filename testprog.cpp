@@ -147,16 +147,14 @@ int main(int argc, char *argv[])
   }
   cout << "complex: " << c << endl;
   cout << "choices: " << (const char*) options.get("choices") << endl;
-  stringstream ss_more;
-  for_each(options.all("more").begin(), options.all("more").end(), Output(ss_more, ", "));
-  cout << "more: " << ss_more.str() << endl;
-  stringstream ss_more_milk;
   {
-    Output out(ss_more_milk, ", ");
-    for (Values::iterator it = options.all("more_milk").begin(); it != options.all("more_milk").end(); ++it)
-      out(*it);
+    stringstream ss;
+    for_each(options.all("more").begin(), options.all("more").end(), Output(ss, ", "));
+    cout << "more: " << ss.str() << endl;
   }
-  cout << "more_milk: " << ss_more_milk.str() << endl;
+  cout << "more_milk:" << endl;
+  for (Values::iterator it = options.all("more_milk").begin(); it != options.all("more_milk").end(); ++it)
+    cout << "- " << *it << endl;
   cout << "hidden: " << options["hidden"] << endl;
   cout << "group: " << (options.get("g") ? "true" : "false") << endl;
 

@@ -123,8 +123,9 @@ def main():
     print "more:",
     print ", ".join(options.more if options.more else [])
 
-    print "more_milk:",
-    print ", ".join(options.more_milk if options.more_milk else [])
+    print "more_milk:"
+    for opt in (options.more_milk if options.more_milk else []):
+        print "-", opt
 
     print "hidden:", options.hidden if options.hidden else ""
     print "group:", ("true" if options.g else "false")
