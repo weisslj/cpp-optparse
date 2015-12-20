@@ -129,27 +129,21 @@ static string basename(const string& s) {
 ////////// } auxiliary (string) functions //////////
 
 
-////////// class OptionParser { //////////
-OptionParser::OptionParser() :
-  _usage(_("%prog [options]")),
-  _add_help_option(true),
-  _add_version_option(true),
-  _interspersed_args(true) {}
-
-Option& OptionParser::add_option(const string& opt) {
+////////// class OptionContainer { //////////
+Option& OptionContainer::add_option(const string& opt) {
   const string tmp[1] = { opt };
   return add_option(vector<string>(&tmp[0], &tmp[1]));
 }
-Option& OptionParser::add_option(const string& opt1, const string& opt2) {
+Option& OptionContainer::add_option(const string& opt1, const string& opt2) {
   const string tmp[2] = { opt1, opt2 };
   return add_option(vector<string>(&tmp[0], &tmp[2]));
 }
-Option& OptionParser::add_option(const string& opt1, const string& opt2, const string& opt3) {
+Option& OptionContainer::add_option(const string& opt1, const string& opt2, const string& opt3) {
   const string tmp[3] = { opt1, opt2, opt3 };
   return add_option(vector<string>(&tmp[0], &tmp[3]));
 }
-Option& OptionParser::add_option(const vector<string>& v) {
-  _opts.resize(_opts.size()+1);
+Option& OptionContainer::add_option(const vector<string>& v) {
+  _opts.resize(_opts.size()+1, Option(get_parser()));
   Option& option = _opts.back();
   string dest_fallback;
   for (vector<string>::const_iterator it = v.begin(); it != v.end(); ++it) {
@@ -171,13 +165,32 @@ Option& OptionParser::add_option(const vector<string>& v) {
     option.dest(dest_fallback);
   return option;
 }
+string OptionContainer::format_option_help(unsigned int indent /* = 2 */) const {
+  stringstream ss;
+
+  if (_opts.empty())
+    return ss.str();
+
+  for (list<Option>::const_iterator it = _opts.begin(); it != _opts.end(); ++it) {
+    if (it->help() != SUPPRESS_HELP)
+      ss << it->format_help(indent);
+  }
+
+  return ss.str();
+}
+////////// } class OptionContainer //////////
+
+////////// class OptionParser { //////////
+OptionParser::OptionParser() :
+  OptionContainer(),
+  _usage(_("%prog [options]")),
+  _add_help_option(true),
+  _add_version_option(true),
+  _interspersed_args(true) {}
 
 OptionParser& OptionParser::add_option_group(const OptionGroup& group) {
   for (list<Option>::const_iterator oit = group._opts.begin(); oit != group._opts.end(); ++oit) {
     const Option& option = *oit;
-    _opts.resize(_opts.size()+1);
-    Option& listOption = _opts.back();
-    listOption = option;
     for (set<string>::const_iterator it = option._short_opts.begin(); it != option._short_opts.end(); ++it)
       _optmap_s[*it] = &option;
     for (set<string>::const_iterator it = option._long_opts.begin(); it != option._long_opts.end(); ++it)
@@ -305,26 +318,16 @@ Values& OptionParser::parse_args(const vector<string>& v) {
     _leftover.push_back(arg);
   }
 
-  for (strMap::const_iterator it = _defaults.begin(); it != _defaults.end(); ++it) {
-    if (not _values.is_set(it->first))
-      _values[it->first] = it->second;
-  }
-
   for (list<Option>::const_iterator it = _opts.begin(); it != _opts.end(); ++it) {
     if (it->get_default() != "" and not _values.is_set(it->dest()))
       _values[it->dest()] = it->get_default();
   }
 
   for (list<OptionGroup const*>::iterator group_it = _groups.begin(); group_it != _groups.end(); ++group_it) {
-      for (strMap::const_iterator it = (*group_it)->_defaults.begin(); it != (*group_it)->_defaults.end(); ++it) {
-          if (not _values.is_set(it->first))
-              _values[it->first] = it->second;
-      }
-      
-      for (list<Option>::const_iterator it = (*group_it)->_opts.begin(); it != (*group_it)->_opts.end(); ++it) {
-          if (it->get_default() != "" and not _values.is_set(it->dest()))
-              _values[it->dest()] = it->get_default();
-      }
+    for (list<Option>::const_iterator it = (*group_it)->_opts.begin(); it != (*group_it)->_opts.end(); ++it) {
+      if (it->get_default() != "" and not _values.is_set(it->dest()))
+        _values[it->dest()] = it->get_default();
+    }
   }
 
   return _values;
@@ -383,20 +386,6 @@ void OptionParser::process_opt(const Option& o, const string& opt, const string&
   }
 }
 
-string OptionParser::format_option_help(unsigned int indent /* = 2 */) const {
-  stringstream ss;
-
-  if (_opts.empty())
-    return ss.str();
-
-  for (list<Option>::const_iterator it = _opts.begin(); it != _opts.end(); ++it) {
-    if (it->help() != SUPPRESS_HELP)
-      ss << it->format_help(indent);
-  }
-
-  return ss.str();
-}
-
 string OptionParser::format_help() const {
   stringstream ss;
 
@@ -412,9 +401,9 @@ string OptionParser::format_help() const {
   for (list<OptionGroup const*>::const_iterator it = _groups.begin(); it != _groups.end(); ++it) {
     const OptionGroup& group = **it;
     ss << endl << "  " << group.title() << ":" << endl;
-    if (group.group_description() != "") {
+    if (group.description() != "") {
       unsigned int malus = 4; // Python seems to not use full length
-      ss << str_format(group.group_description(), 4, cols() - malus) << endl;
+      ss << str_format(group.description(), 4, cols() - malus) << endl;
     }
     ss << group.format_option_help(4);
   }
@@ -588,6 +577,14 @@ Option& Option::type(const std::string& t) {
   _type = t;
   nargs((t == "") ? 0 : 1);
   return *this;
+}
+
+const std::string& Option::get_default() const {
+  strMap::const_iterator it = _parser._defaults.find(dest());
+  if (it != _parser._defaults.end())
+    return it->second;
+  else
+    return _default;
 }
 ////////// } class Option //////////
 

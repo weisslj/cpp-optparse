@@ -115,11 +115,17 @@ int main(int argc, char *argv[])
   parser.add_option("-K", "--callback") .action("callback") .callback(mc) .help("callback test");
   parser.add_option("--string-callback") .action("callback") .callback(mc) .type("string") .help("callback test");
 
-  OptionGroup group = OptionGroup(parser, "Dangerous Options",
+  OptionGroup group1 = OptionGroup(parser, "Dangerous Options",
       "Caution: use these options at your own risk. "
       "It is believed that some of them\nbite.");
-  group.add_option("-g") .action("store_true") .help("Group option.") .set_default("0");
-  parser.add_option_group(group);
+  group1.add_option("-g") .action("store_true") .help("Group option.") .set_default("0");
+  parser.add_option_group(group1);
+
+  OptionGroup group2 = OptionGroup(parser, "Size Options", "Image Size Options.");
+  group2.add_option("-w", "--width") .action("store") .type("int") .set_default(640) .help("default: %default");
+  group2.add_option("--height") .action("store") .type("int") .help("default: %default");
+  parser.set_defaults("height", 480);
+  parser.add_option_group(group2);
 
   Values& options = parser.parse_args(argc, argv);
   vector<string> args = parser.args();
@@ -153,6 +159,9 @@ int main(int argc, char *argv[])
 
   cout << "option1: " << (int) options.get("option1") << std::endl;
   cout << "option2: " << (int) options.get("option2") << std::endl;
+
+  cout << "width: " << (int) options.get("width") << std::endl;
+  cout << "height: " << (int) options.get("height") << std::endl;
 
   cout << endl << "leftover arguments: " << endl;
   for (vector<string>::const_iterator it = args.begin(); it != args.end(); ++it) {
