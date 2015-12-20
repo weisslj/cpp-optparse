@@ -83,3 +83,5 @@ c -K -K -K
 c --string-callback x
 c --no-clear foo bar -k -k z -v -n3 "x y" -i 8 -f 3.2 -c 2
 DISABLE_INTERSPERSED_ARGS=1 c -k a -k b
+DISABLE_USAGE=1 c --argument-does-not-exist
+DISABLE_USAGE=1 c --help

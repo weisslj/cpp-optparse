@@ -4,7 +4,7 @@
 
 import sys
 import os
-from optparse import OptionParser, OptionGroup, SUPPRESS_HELP
+from optparse import OptionParser, OptionGroup, SUPPRESS_HELP, SUPPRESS_USAGE
 
 class MyCallback(object):
     def __init__(self):
@@ -20,7 +20,10 @@ class MyCallback(object):
         print
 
 def main():
-    usage = "usage: %prog [OPTION]... DIR [FILE]..."
+    usage = \
+        "usage: %prog [OPTION]... DIR [FILE]..." \
+        if "DISABLE_USAGE" not in os.environ else \
+        SUPPRESS_USAGE
     version = (
         "%prog 1.0\nCopyright (C) 2010 Johannes Weißl\n"
         "License GPLv3+: GNU GPL version 3 or later "

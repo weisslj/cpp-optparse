@@ -44,11 +44,9 @@ public:
 
 int main(int argc, char *argv[])
 {
-#ifndef DISABLE_USAGE
-  const string usage = "usage: %prog [OPTION]... DIR [FILE]...";
-#else
-  const string usage = SUPPRESS_USAGE;
-#endif
+  const string usage =
+    (!getenv("DISABLE_USAGE")) ?
+    "usage: %prog [OPTION]... DIR [FILE]..." : SUPPRESS_USAGE;
   const string version = "%prog 1.0\nCopyright (C) 2010 Johannes Weißl\n"
     "License GPLv3+: GNU GPL version 3 or later "
     "<http://gnu.org/licenses/gpl.html>.\n"
