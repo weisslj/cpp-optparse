@@ -276,6 +276,11 @@ class Option {
     Option& choices(InputIterator begin, InputIterator end) {
       _choices.assign(begin, end); type("choice"); return *this;
     }
+#if __cplusplus >= 201103L
+    Option& choices(std::initializer_list<std::string> ilist) {
+      _choices.assign(ilist); type("choice"); return *this;
+    }
+#endif
     Option& help(const std::string& h) { _help = h; return *this; }
     Option& metavar(const std::string& m) { _metavar = m; return *this; }
     Option& callback(Callback& c) { _callback = &c; return *this; }

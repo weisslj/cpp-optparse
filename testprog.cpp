@@ -102,6 +102,9 @@ int main(int argc, char *argv[])
   parser.add_option("-c", "--complex") .action("store") .type("complex");
   char const* const choices[] = { "foo", "bar", "baz" };
   parser.add_option("-C", "--choices") .choices(&choices[0], &choices[3]);
+#if __cplusplus >= 201103L
+  parser.add_option("--choices-list") .choices({"item1", "item2", "item3"});
+#endif
   parser.add_option("-m", "--more") .action("append");
   parser.add_option("--more-milk") .action("append_const") .set_const("milk");
   parser.add_option("--hidden") .help(SUPPRESS_HELP);
@@ -147,6 +150,9 @@ int main(int argc, char *argv[])
   }
   cout << "complex: " << c << endl;
   cout << "choices: " << (const char*) options.get("choices") << endl;
+#if __cplusplus >= 201103L
+  cout << "choices-list: " << (const char*) options.get("choices-list") << endl;
+#endif
   {
     stringstream ss;
     for_each(options.all("more").begin(), options.all("more").end(), Output(ss, ", "));
