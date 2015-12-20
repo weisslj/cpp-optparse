@@ -2,4 +2,4 @@ language: cpp
 compiler:
 - clang
 - gcc
-script: make test
+script: make test WARN=1
