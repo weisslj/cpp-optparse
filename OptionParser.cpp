@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2010 Johannes Weißl <jargon@molb.org>
- * License: your favourite BSD-style license
+ * License: MIT License
  *
  * See OptionParser.h for help.
  */
@@ -171,6 +171,9 @@ Option& OptionParser::add_option(const vector<string>& v) {
 OptionParser& OptionParser::add_option_group(const OptionGroup& group) {
   for (list<Option>::const_iterator oit = group._opts.begin(); oit != group._opts.end(); ++oit) {
     const Option& option = *oit;
+    _opts.resize(_opts.size()+1);
+    Option& listOption = _opts.back();
+    listOption = option;
     for (set<string>::const_iterator it = option._short_opts.begin(); it != option._short_opts.end(); ++it)
       _optmap_s[*it] = &option;
     for (set<string>::const_iterator it = option._long_opts.begin(); it != option._long_opts.end(); ++it)
@@ -213,11 +216,14 @@ const Option& OptionParser::lookup_long_opt(const string& opt) const {
 
   list<string> matching;
   for (optMap::const_iterator it = _optmap_l.begin(); it != _optmap_l.end(); ++it) {
-    if (it->first.compare(0, opt.length(), opt) == 0)
+    if (it->first.compare(0, opt.length(), opt) == 0) {
       matching.push_back(it->first);
+      if (it->first.length() == opt.length())
+          break;
+    }
   }
   if (matching.size() > 1) {
-    string x = str_join(", ", matching.begin(), matching.end());
+    string x = str_join_trans(", ", matching.begin(), matching.end(), str_wrap("--", ""));
     error(_("ambiguous option") + string(": --") + opt + " (" + x + "?)");
   }
   if (matching.size() == 0)
@@ -307,9 +313,14 @@ Values& OptionParser::parse_args(const vector<string>& v) {
 
   for (list<OptionGroup const*>::const_iterator group_it = _groups.begin(); group_it != _groups.end(); ++group_it) {
     const OptionGroup& group = **group_it;
+    for (strMap::const_iterator it = group._defaults.begin(); it != group._defaults.end(); ++it) {
+      if (not _values.is_set(it->first))
+        _values[it->first] = it->second;
+    }
+
     for (list<Option>::const_iterator it = group._opts.begin(); it != group._opts.end(); ++it) {
-        if (it->get_default() != "" and not _values.is_set(it->dest()))
-            _values[it->dest()] = it->get_default();
+      if (it->get_default() != "" and not _values.is_set(it->dest()))
+        _values[it->dest()] = it->get_default();
     }
   }
 
@@ -362,6 +373,9 @@ void OptionParser::process_opt(const Option& o, const string& opt, const string&
     std::exit(0);
   }
   else if (o.action() == "callback" && o.callback()) {
+    string err = o.check_type(opt, value);
+    if (err != "")
+      error(err);
     (*o.callback())(o, opt, value, *this);
   }
 }
@@ -555,8 +569,19 @@ string Option::format_help(unsigned int indent /* = 2 */) const {
 Option& Option::action(const string& a) {
   _action = a;
   if (a == "store_const" || a == "store_true" || a == "store_false" ||
-      a == "append_const" || a == "count" || a == "help" || a == "version")
+      a == "append_const" || a == "count" || a == "help" || a == "version") {
     nargs(0);
+  } else if (a == "callback") {
+    nargs(0);
+    type("");
+  }
+  return *this;
+}
+
+
+Option& Option::type(const std::string& t) {
+  _type = t;
+  nargs((t == "") ? 0 : 1);
   return *this;
 }
 ////////// } class Option //////////

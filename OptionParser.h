@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2010 Johannes Weißl <jargon@molb.org>
- * License: your favourite BSD-style license
+ * License: MIT License
  *
  * git clone http://github.com/weisslj/cpp-optparse.git
  *
@@ -141,6 +141,8 @@ class OptionParser {
     OptionParser& set_defaults(const std::string& dest, const std::string& val) {
       _defaults[dest] = val; return *this;
     }
+    template<typename T>
+    OptionParser& set_defaults(const std::string& dest, T t) { std::ostringstream ss; ss << t; _defaults[dest] = ss.str(); return *this; }
     OptionParser& enable_interspersed_args() { _interspersed_args = true; return *this; }
     OptionParser& disable_interspersed_args() { _interspersed_args = false; return *this; }
     OptionParser& add_option_group(const OptionGroup& group);
@@ -242,7 +244,7 @@ class Option {
     virtual ~Option() {}
 
     Option& action(const std::string& a);
-    Option& type(const std::string& t) { _type = t; return *this; }
+    Option& type(const std::string& t);
     Option& dest(const std::string& d) { _dest = d; return *this; }
     Option& set_default(const std::string& d) { _default = d; return *this; }
     template<typename T>
