@@ -55,8 +55,8 @@ c -v -s
 c -n-10
 c -n 300
 c --number=0
-# c -H # TODO: align formatting
-# c -V # TODO: align formatting
+c -H
+c -V
 c -i-10
 c -i 300
 c --int=0
