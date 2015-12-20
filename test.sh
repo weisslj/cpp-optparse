@@ -34,7 +34,6 @@ c
 c --str # ambiguous option
 c -Z # unknown argument
 c --argument-does-not-exist
-c -v
 c --version
 c -h
 c --help
