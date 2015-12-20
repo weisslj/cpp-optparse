@@ -1,6 +1,7 @@
 #include "OptionParser.h"
 
 #include <iostream>
+#include <cstdlib>
 #include <sstream>
 #include <string>
 #include <complex>
