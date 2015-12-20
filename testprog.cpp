@@ -150,9 +150,10 @@ int main(int argc, char *argv[])
   for_each(options.all("more").begin(), options.all("more").end(), Output(", "));
   cout << "more_milk: ";
   {
-    Output out(", ");
+    Output* out = new Output(", ");
     for (Values::iterator it = options.all("more_milk").begin(); it != options.all("more_milk").end(); ++it)
-      out(*it);
+      (*out)(*it);
+    delete out;
   }
   cout << "hidden: " << options["hidden"] << endl;
   cout << "group: " << (options.get("g") ? "true" : "false") << endl;
