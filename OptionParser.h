@@ -73,6 +73,69 @@ class Values {
     std::set<std::string> _userSet;
 };
 
+class Option {
+  public:
+    Option(const OptionParser& p) :
+      _parser(p), _action("store"), _type("string"), _nargs(1), _callback(0) {}
+    virtual ~Option() {}
+
+    Option& action(const std::string& a);
+    Option& type(const std::string& t);
+    Option& dest(const std::string& d) { _dest = d; return *this; }
+    Option& set_default(const std::string& d) { _default = d; return *this; }
+    template<typename T>
+    Option& set_default(T t) { std::ostringstream ss; ss << t; _default = ss.str(); return *this; }
+    Option& nargs(size_t n) { _nargs = n; return *this; }
+    Option& set_const(const std::string& c) { _const = c; return *this; }
+    template<typename InputIterator>
+    Option& choices(InputIterator begin, InputIterator end) {
+      _choices.assign(begin, end); type("choice"); return *this;
+    }
+#if __cplusplus >= 201103L
+    Option& choices(std::initializer_list<std::string> ilist) {
+      _choices.assign(ilist); type("choice"); return *this;
+    }
+#endif
+    Option& help(const std::string& h) { _help = h; return *this; }
+    Option& metavar(const std::string& m) { _metavar = m; return *this; }
+    Option& callback(Callback& c) { _callback = &c; return *this; }
+
+    const std::string& action() const { return _action; }
+    const std::string& type() const { return _type; }
+    const std::string& dest() const { return _dest; }
+    const std::string& get_default() const;
+    size_t nargs() const { return _nargs; }
+    const std::string& get_const() const { return _const; }
+    const std::list<std::string>& choices() const { return _choices; }
+    const std::string& help() const { return _help; }
+    const std::string& metavar() const { return _metavar; }
+    Callback* callback() const { return _callback; }
+
+  private:
+    std::string check_type(const std::string& opt, const std::string& val) const;
+    std::string format_option_help(unsigned int indent = 2) const;
+    std::string format_help(unsigned int indent = 2) const;
+
+    const OptionParser& _parser;
+
+    std::set<std::string> _short_opts;
+    std::set<std::string> _long_opts;
+
+    std::string _action;
+    std::string _type;
+    std::string _dest;
+    std::string _default;
+    size_t _nargs;
+    std::string _const;
+    std::list<std::string> _choices;
+    std::string _help;
+    std::string _metavar;
+    Callback* _callback;
+
+    friend class OptionContainer;
+    friend class OptionParser;
+};
+
 class OptionContainer {
   public:
     OptionContainer(const std::string& d = "") : _description(d) {}
@@ -203,69 +266,6 @@ class OptionGroup : public OptionContainer {
     std::string _title;
 
   friend class OptionParser;
-};
-
-class Option {
-  public:
-    Option(const OptionParser& p) :
-      _parser(p), _action("store"), _type("string"), _nargs(1), _callback(0) {}
-    virtual ~Option() {}
-
-    Option& action(const std::string& a);
-    Option& type(const std::string& t);
-    Option& dest(const std::string& d) { _dest = d; return *this; }
-    Option& set_default(const std::string& d) { _default = d; return *this; }
-    template<typename T>
-    Option& set_default(T t) { std::ostringstream ss; ss << t; _default = ss.str(); return *this; }
-    Option& nargs(size_t n) { _nargs = n; return *this; }
-    Option& set_const(const std::string& c) { _const = c; return *this; }
-    template<typename InputIterator>
-    Option& choices(InputIterator begin, InputIterator end) {
-      _choices.assign(begin, end); type("choice"); return *this;
-    }
-#if __cplusplus >= 201103L
-    Option& choices(std::initializer_list<std::string> ilist) {
-      _choices.assign(ilist); type("choice"); return *this;
-    }
-#endif
-    Option& help(const std::string& h) { _help = h; return *this; }
-    Option& metavar(const std::string& m) { _metavar = m; return *this; }
-    Option& callback(Callback& c) { _callback = &c; return *this; }
-
-    const std::string& action() const { return _action; }
-    const std::string& type() const { return _type; }
-    const std::string& dest() const { return _dest; }
-    const std::string& get_default() const;
-    size_t nargs() const { return _nargs; }
-    const std::string& get_const() const { return _const; }
-    const std::list<std::string>& choices() const { return _choices; }
-    const std::string& help() const { return _help; }
-    const std::string& metavar() const { return _metavar; }
-    Callback* callback() const { return _callback; }
-
-  private:
-    std::string check_type(const std::string& opt, const std::string& val) const;
-    std::string format_option_help(unsigned int indent = 2) const;
-    std::string format_help(unsigned int indent = 2) const;
-
-    const OptionParser& _parser;
-
-    std::set<std::string> _short_opts;
-    std::set<std::string> _long_opts;
-
-    std::string _action;
-    std::string _type;
-    std::string _dest;
-    std::string _default;
-    size_t _nargs;
-    std::string _const;
-    std::list<std::string> _choices;
-    std::string _help;
-    std::string _metavar;
-    Callback* _callback;
-
-    friend class OptionContainer;
-    friend class OptionParser;
 };
 
 class Callback {
