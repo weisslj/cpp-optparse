@@ -454,7 +454,7 @@ void OptionParser::print_version() const {
 }
 
 void OptionParser::exit() const {
-  std::exit(2);
+  throw 2;
 }
 void OptionParser::error(const string& msg) const {
   print_usage(cerr);
