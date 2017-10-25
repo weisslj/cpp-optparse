@@ -132,46 +132,51 @@ int main(int argc, char *argv[])
   parser.set_defaults("height", 480);
   parser.add_option_group(group2);
 
-  Values& options = parser.parse_args(argc, argv);
-  vector<string> args = parser.args();
+  try {
+    Values& options = parser.parse_args(argc, argv);
+    vector<string> args = parser.args();
 
-  cout << "clear: " << (options.get("no_clear") ? "false" : "true") << endl;
-  cout << "string: " << options["string"] << endl;
-  cout << "clause: " << options["clause"] << endl;
-  cout << "k: " << options["k"] << endl;
-  cout << "verbosity: " << options["verbosity"] << endl;
-  cout << "number: " << (int) options.get("number") << endl;
-  cout << "int: " << (int) options.get("int") << endl;
-  cout << "float: " << (float) options.get("float") << endl;
-  complex<double> c = 0;
-  if (options.is_set("complex")) {
-    stringstream ss;
-    ss << options["complex"];
-    ss >> c;
+    cout << "clear: " << (options.get("no_clear") ? "false" : "true") << endl;
+    cout << "string: " << options["string"] << endl;
+    cout << "clause: " << options["clause"] << endl;
+    cout << "k: " << options["k"] << endl;
+    cout << "verbosity: " << options["verbosity"] << endl;
+    cout << "number: " << (int) options.get("number") << endl;
+    cout << "int: " << (int) options.get("int") << endl;
+    cout << "float: " << (float) options.get("float") << endl;
+    complex<double> c = 0;
+    if (options.is_set("complex")) {
+      stringstream ss;
+      ss << options["complex"];
+      ss >> c;
+    }
+    cout << "complex: " << c << endl;
+    cout << "choices: " << (const char*) options.get("choices") << endl;
+    cout << "choices-list: " << (const char*) options.get("choices_list") << endl;
+    {
+      stringstream ss;
+      for_each(options.all("more").begin(), options.all("more").end(), Output(ss, ", "));
+      cout << "more: " << ss.str() << endl;
+    }
+    cout << "more_milk:" << endl;
+    for (Values::iterator it = options.all("more_milk").begin(); it != options.all("more_milk").end(); ++it)
+      cout << "- " << *it << endl;
+    cout << "hidden: " << options["hidden"] << endl;
+    cout << "group: " << (options.get("g") ? "true" : "false") << endl;
+
+    cout << "option1: " << (int) options.get("option1") << std::endl;
+    cout << "option2: " << (int) options.get("option2") << std::endl;
+
+    cout << "width: " << (int) options.get("width") << std::endl;
+    cout << "height: " << (int) options.get("height") << std::endl;
+
+    cout << endl << "leftover arguments: " << endl;
+    for (vector<string>::const_iterator it = args.begin(); it != args.end(); ++it) {
+      cout << "arg: " << *it << endl;
+    }
   }
-  cout << "complex: " << c << endl;
-  cout << "choices: " << (const char*) options.get("choices") << endl;
-  cout << "choices-list: " << (const char*) options.get("choices_list") << endl;
-  {
-    stringstream ss;
-    for_each(options.all("more").begin(), options.all("more").end(), Output(ss, ", "));
-    cout << "more: " << ss.str() << endl;
-  }
-  cout << "more_milk:" << endl;
-  for (Values::iterator it = options.all("more_milk").begin(); it != options.all("more_milk").end(); ++it)
-    cout << "- " << *it << endl;
-  cout << "hidden: " << options["hidden"] << endl;
-  cout << "group: " << (options.get("g") ? "true" : "false") << endl;
-
-  cout << "option1: " << (int) options.get("option1") << std::endl;
-  cout << "option2: " << (int) options.get("option2") << std::endl;
-
-  cout << "width: " << (int) options.get("width") << std::endl;
-  cout << "height: " << (int) options.get("height") << std::endl;
-
-  cout << endl << "leftover arguments: " << endl;
-  for (vector<string>::const_iterator it = args.begin(); it != args.end(); ++it) {
-    cout << "arg: " << *it << endl;
+  catch(int ex) {
+    return ex;
   }
 
   return 0;
