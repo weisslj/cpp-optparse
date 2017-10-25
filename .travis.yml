@@ -1,11 +1,12 @@
+---
 language: cpp
 os:
-- linux
-- osx
+  - linux
+  - osx
 compiler:
-- clang
-- gcc
+  - clang
+  - gcc
 env:
-- CPP11=0
-- CPP11=1
+  - CPP11=0
+  - CPP11=1
 script: make test WARN=1
