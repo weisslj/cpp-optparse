@@ -4,20 +4,12 @@
 
 export COLUMNS=80
 
-# mktemp takes different arguments on MacOS
-if [[ "$(uname)" -eq "Darwin" ]]
-then
-    tmpdir_flag="-t"
-else
-    tmpdir_flag="--tmpdir"
-fi
-
 c () {
     echo "$(printf "%q " ./testprog "$@")"
-    local t_stdout_cpp=$(mktemp $tmpdir_flag cpp-stdout-optparse.XXXXXXXXXX)
-    local t_stderr_cpp=$(mktemp $tmpdir_flag cpp-stderr-optparse.XXXXXXXXXX)
-    local t_stdout_pyt=$(mktemp $tmpdir_flag pyt-stdout-optparse.XXXXXXXXXX)
-    local t_stderr_pyt=$(mktemp $tmpdir_flag pyt-stderr-optparse.XXXXXXXXXX)
+    local t_stdout_cpp=$(mktemp -t cpp-stdout-optparse.XXXXXXXXXX)
+    local t_stderr_cpp=$(mktemp -t cpp-stderr-optparse.XXXXXXXXXX)
+    local t_stdout_pyt=$(mktemp -t pyt-stdout-optparse.XXXXXXXXXX)
+    local t_stderr_pyt=$(mktemp -t pyt-stderr-optparse.XXXXXXXXXX)
     ./testprog "$@" >"$t_stdout_cpp" 2>"$t_stderr_cpp"
     status_cpp=$?
     ./t/testprog "$@" >"$t_stdout_pyt" 2>"$t_stderr_pyt"
