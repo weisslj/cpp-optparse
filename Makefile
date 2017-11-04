@@ -1,6 +1,6 @@
 ifeq ($(WARN),1)
 ifeq ($(CXX),g++)
-WARN_FLAGS = -O3 -g -Wall -Wextra -Wabi -Wctor-dtor-privacy -Wnon-virtual-dtor -Wreorder -Wstrict-null-sentinel -Woverloaded-virtual -Wshadow -Wcast-align -Wpointer-arith -Wwrite-strings -Wundef -Wredundant-decls -Werror # -Weffc++
+WARN_FLAGS = -O3 -g -Wall -Wextra -Werror # -Weffc++
 else ifeq ($(CXX),clang++)
 WARN_FLAGS = -O3 -g -Werror
 else ifeq ($(CXX),icpc)
