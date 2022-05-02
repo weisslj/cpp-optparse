@@ -1,23 +1,22 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- mode: python; coding: utf-8; indent-tabs-mode: nil -*-
 # vim: set filetype=python fileencoding=utf-8 expandtab sw=4 sts=4:
 
-import sys
 import os
 from optparse import OptionParser, OptionGroup, SUPPRESS_HELP, SUPPRESS_USAGE
 
-class MyCallback(object):
+class MyCallback:
     def __init__(self):
         self.counter = 0
     def __call__(self, option, opt, val, parser):
         self.counter += 1
-        print "--- MyCallback --- " + str(self.counter) + ". time called"
-        print "--- MyCallback --- option.action(): " + option.action
-        print "--- MyCallback --- option.type(): " + (option.type if option.type else "")
-        print "--- MyCallback --- opt: " + opt
-        print "--- MyCallback --- val: " + (val if val else "")
-        print "--- MyCallback --- parser.usage(): " + parser.usage
-        print
+        print("--- MyCallback --- " + str(self.counter) + ". time called")
+        print("--- MyCallback --- option.action(): " + option.action)
+        print("--- MyCallback --- option.type(): " + (option.type if option.type else ""))
+        print("--- MyCallback --- opt: " + opt)
+        print("--- MyCallback --- val: " + (val if val else ""))
+        print("--- MyCallback --- parser.usage(): " + parser.usage)
+        print()
 
 def main():
     usage = \
@@ -112,40 +111,40 @@ def main():
 
     options, args = parser.parse_args()
 
-    print "clear:", ("false" if options.no_clear else "true")
-    print "string:", options.string if options.string else ""
-    print "clause:", options.clause
-    print "k:", options.k if options.k else ""
-    print "verbosity:", options.verbosity
-    print "number:", options.number
-    print "int:", options.int
-    print "float: %g" % (options.float,)
+    print("clear:", ("false" if options.no_clear else "true"))
+    print("string:", options.string if options.string else "")
+    print("clause:", options.clause)
+    print("k:", options.k if options.k else "")
+    print("verbosity:", options.verbosity)
+    print("number:", options.number)
+    print("int:", options.int)
+    print("float: %g" % (options.float,))
     c = complex(0)
     if options.complex is not None:
         c = options.complex
-    print "complex: (%g,%g)" % (c.real, c.imag)
-    print "choices:", options.choices if options.choices else ""
-    print "choices-list:", options.choices_list if options.choices_list else ""
-    print "more:",
-    print ", ".join(options.more if options.more else [])
+    print("complex: (%g,%g)" % (c.real, c.imag))
+    print("choices:", options.choices if options.choices else "")
+    print("choices-list:", options.choices_list if options.choices_list else "")
+    print("more: ", end="")
+    print(", ".join(options.more if options.more else []))
 
-    print "more_milk:"
+    print("more_milk:")
     for opt in (options.more_milk if options.more_milk else []):
-        print "-", opt
+        print("-", opt)
 
-    print "hidden:", options.hidden if options.hidden else ""
-    print "group:", ("true" if options.g else "false")
+    print("hidden:", options.hidden if options.hidden else "")
+    print("group:", ("true" if options.g else "false"))
 
-    print "option1:", options.option1
-    print "option2:", options.option2
+    print("option1:", options.option1)
+    print("option2:", options.option2)
 
-    print "width:", options.width
-    print "height:", options.height
+    print("width:", options.width)
+    print("height:", options.height)
 
-    print
-    print "leftover arguments: "
+    print()
+    print("leftover arguments: ")
     for arg in args:
-        print "arg: " + arg
+        print("arg: " + arg)
 
     return 0
 
