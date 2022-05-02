@@ -216,7 +216,7 @@ void OptionParser::handle_short_opt(const string& opt, const string& arg) {
     value = arg.substr(2);
     if (value == "") {
       if (_remaining.empty())
-        error("-" + opt + " " + _("option requires an argument"));
+        error("-" + opt + " " + _("option requires 1 argument"));
       value = _remaining.front();
       _remaining.pop_front();
     }
@@ -269,7 +269,7 @@ void OptionParser::handle_long_opt(const string& optstr) {
   }
 
   if (option._nargs == 1 and value == "")
-    error("--" + opt + " " + _("option requires an argument"));
+    error("--" + opt + " " + _("option requires 1 argument"));
 
   process_opt(option, string("--") + opt, value);
 }

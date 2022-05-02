@@ -43,6 +43,7 @@ c --no-clear
 c --clear --no-clear
 c --clear --no-clear --clear
 c --string "foo bar"
+c -n # requires argument
 c --string # requires argument
 c -x foo
 c --clause foo
