@@ -9,7 +9,9 @@
 #include <cstdlib>
 #include <algorithm>
 #include <complex>
+#if __cplusplus < 202002L
 #include <ciso646>
+#endif
 
 #if defined(ENABLE_NLS) && ENABLE_NLS
 # include <libintl.h>
