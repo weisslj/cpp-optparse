@@ -11,7 +11,7 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES Intel)
   set(CMAKE_CXX_FLAGS "-O3 -ipo -g -Wall -wd981 -wd383 -wd2259 -Werror")
 endif()
 
-add_library(cpp-optparse OBJECT OptionParser.cpp OptionParser.h)
+add_library(cpp-optparse OptionParser.cpp OptionParser.h)
 
 add_executable(testprog testprog.cpp)
 
@@ -19,3 +19,11 @@ target_link_libraries(testprog cpp-optparse)
 
 enable_testing()
 add_test(NAME Test COMMAND testprog "${CMAKE_SOURCE_DIR}/test.sh")
+
+include(GNUInstallDirs)
+
+configure_file("pkg-config.pc.in" "cpp-optparse.pc" @ONLY)
+
+install(TARGETS cpp-optparse)
+install(FILES OptionParser.h DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/")
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/cpp-optparse.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
