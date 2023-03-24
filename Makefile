@@ -1,8 +1,8 @@
 ifeq ($(WARN),1)
 ifeq ($(CXX),g++)
-WARN_FLAGS = -O3 -g -Wall -Wextra -Werror # -Weffc++
+WARN_FLAGS = -O3 -g -Wall -Wextra -Wzero-as-null-pointer-constant -Werror # -Weffc++
 else ifeq ($(CXX),clang++)
-WARN_FLAGS = -O3 -g -Wall -Wextra -Werror
+WARN_FLAGS = -O3 -g -Wall -Wextra -Wzero-as-null-pointer-constant -Werror
 else ifeq ($(CXX),icpc)
 WARN_FLAGS = -O3 -ipo -g -Wall -wd981 -wd383 -wd2259 -Werror # -Weffc++
 endif
