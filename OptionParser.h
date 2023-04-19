@@ -169,7 +169,7 @@ class OptionParser : public OptionContainer {
 
     OptionParser& usage(const std::string& u) { set_usage(u); return *this; }
     OptionParser& version(const std::string& v) { _version = v; return *this; }
-    OptionParser& description(const std::string& d) { _description = d; return *this; }
+    OptionParser& description(const std::string& d) override { _description = d; return *this; }
     OptionParser& add_help_option(bool h) { _add_help_option = h; return *this; }
     OptionParser& add_version_option(bool v) { _add_version_option = v; return *this; }
     OptionParser& prog(const std::string& p) { _prog = p; return *this; }
@@ -185,7 +185,7 @@ class OptionParser : public OptionContainer {
 
     const std::string& usage() const { return _usage; }
     const std::string& version() const { return _version; }
-    const std::string& description() const { return _description; }
+    const std::string& description() const override { return _description; }
     bool add_help_option() const { return _add_help_option; }
     bool add_version_option() const { return _add_version_option; }
     const std::string& prog() const { return _prog; }
@@ -220,7 +220,7 @@ class OptionParser : public OptionContainer {
     void exit() const;
 
   private:
-    const OptionParser& get_parser() { return *this; }
+    const OptionParser& get_parser() override { return *this; }
     const Option& lookup_short_opt(const std::string& opt) const;
     const Option& lookup_long_opt(const std::string& opt) const;
 
@@ -260,7 +260,7 @@ class OptionGroup : public OptionContainer {
     const std::string& title() const { return _title; }
 
   private:
-    const OptionParser& get_parser() { return _parser; }
+    const OptionParser& get_parser() override { return _parser; }
 
     const OptionParser& _parser;
     std::string _title;
